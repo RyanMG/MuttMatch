@@ -1,3 +1,4 @@
+'use server';
 import {API_ROOT} from "@constants/api";
 import {
   TLoginLoginDetails,
@@ -76,7 +77,7 @@ export const signOut = async ():Promise<boolean> => {
     })
       .then(payload => payload.text());
 
-    if (resp === "OK") {
+    if (resp === "OK" || resp === "Unauthorized") {
       return true;
     }
 
