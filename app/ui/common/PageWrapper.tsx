@@ -8,7 +8,7 @@ export default function PageWrapper({
   pageTitle?: string
 }): ReactNode {
   return (
-    <div className="flex flex-col w-full min-h-screen p-4">
+    <div className="flex flex-col flex-1 min-h-screen p-3">
       {pageTitle && (
         <h1 className="text-2xl font-bold text-indigo-950 pb-2">{pageTitle}</h1>
       )}
