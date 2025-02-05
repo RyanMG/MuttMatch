@@ -6,18 +6,20 @@ import {
   TLoginLoginDetails
 } from "@definitions/login";
 import {USER_STORAGE_TOKEN} from "@constants/auth";
+import {signOut} from "@api/auth";
+import {useRouter} from 'next/navigation';
 
 /**
  * CONTEXT
  */
 const AuthContext = createContext<{
   setUser: (userDetails: TLoginLoginDetails) => void;
-  signOut: () => void;
+  logout: () => void;
   userDetails: TLoginLoginDetails | null;
   isLoading: boolean;
 }>({
   setUser: () => null,
-  signOut: () => null,
+  logout: () => null,
   userDetails: null,
   isLoading: true
 });
@@ -26,6 +28,7 @@ const AuthContext = createContext<{
  * PROVIDER
  */
 export default function AuthProvider ({children}:{children: ReactNode}): ReactNode {
+  const router = useRouter();
   const {
     setStorageItem,
     getStorageItem,
@@ -60,16 +63,29 @@ export default function AuthProvider ({children}:{children: ReactNode}): ReactNo
   /**
    * User signs out
    */
-  const signOut = useCallback(async (): Promise<void> => {
-    removeStorageItem(USER_STORAGE_TOKEN);
-    setUserDetails(null);
+  const logout = useCallback(async (): Promise<void> => {
+    try {
+      const wasLoggedOut: boolean = await signOut();
+
+      if (wasLoggedOut) {
+        removeStorageItem(USER_STORAGE_TOKEN);
+        setUserDetails(null);
+        router.push('/login');
+
+      } else {
+        // TODO: build an error notification snackbar
+      }
+
+    } catch (err) {
+      console.error('err', err);
+    }
   }, [removeStorageItem]);
 
   return (
     <AuthContext.Provider
       value={{
         setUser,
-        signOut,
+        logout,
         userDetails,
         isLoading
       }}

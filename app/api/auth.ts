@@ -67,3 +67,23 @@ export const signIn = async (prevState: TLoginFormState | null, formData: FormDa
     } as TLoginFormState;
   }
 }
+
+export const signOut = async ():Promise<boolean> => {
+  try {
+    const resp = await fetch(`${API_ROOT}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    })
+      .then(payload => payload.text());
+
+    if (resp === "OK") {
+      return true;
+    }
+
+    return false;
+
+  } catch (err) {
+    console.error("Error logging user out:", err);
+    return false;
+  }
+}

@@ -6,7 +6,7 @@ import { useAuthContext } from "@context/authProvider";
 import PageLoading from "@ui/PageLoading";
 
 export default function Home() {
-  const {userDetails, isLoading, signOut} = useAuthContext();
+  const {userDetails, isLoading, logout} = useAuthContext();
 
   return (
     <div className="h-screen w-screen">
@@ -22,7 +22,7 @@ export default function Home() {
               <>
                 <h1 className="text-black">{`Hello ${userDetails?.name}`}</h1>
                 <Button
-                  onClick={signOut}
+                  onClick={logout}
                 >
                   Log out
                 </Button>
