@@ -66,7 +66,7 @@ export default function AuthProvider ({children}:{children: ReactNode}): ReactNo
   const logout = useCallback(async (): Promise<void> => {
     try {
       const wasLoggedOut: boolean = await signOut();
-
+;
       if (wasLoggedOut) {
         removeStorageItem(USER_STORAGE_TOKEN);
         setUserDetails(null);
