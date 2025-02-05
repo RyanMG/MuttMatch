@@ -3,6 +3,7 @@
 import { useAuthContext } from "@context/authProvider";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function UserIcon() {
   return (
@@ -18,9 +19,10 @@ function UserIcon() {
 export default function UserOptions() {
   const {isLoading, hasSession, userDetails, logout} = useAuthContext();
   const [showUserDropdown, setShowUserDropdown] = useState<boolean>(false);
+  const router = useRouter();
 
-  const toggleUserDropdown = () => {
-    setShowUserDropdown(!showUserDropdown);
+  const toggleUserDropdown = (shouldOpen?: boolean) => {
+    setShowUserDropdown(shouldOpen ?? !showUserDropdown);
   }
 
   return (
@@ -33,7 +35,7 @@ export default function UserOptions() {
         {!isLoading &&
           <>
             {hasSession?.current &&
-              <div className="flex flex-row items-center gap-1" onClick={toggleUserDropdown}>
+              <div className="flex flex-row items-center gap-1" onClick={() => toggleUserDropdown()}>
                 <UserIcon />
                 <p className="text-white">{`Hello ${userDetails?.current?.name}!`}</p>
               </div>
@@ -46,11 +48,27 @@ export default function UserOptions() {
           </>
         }
       </div>
-      <div className={`transition duration-300 ease-in-out flex fixed top-10 right-1 bg-white border border-orange-500 border-t-0 drop-shadow-md w-32 px-2 py-4 ${showUserDropdown ? 'opacity-100' : 'opacity-0'}`}>
-        <div className="flex flex-col gap-2">
-          <p className="cursor-pointer text-orange-500 hover:text-orange-700" onClick={() => logout()}>Sign out</p>
+
+      <div>
+        <div className={`fixed left-0 top-10 h-full w-full bg-black ${showUserDropdown ? 'flex opacity-50' : 'hidden opacity-0'}`} onClick={() => toggleUserDropdown()} />
+        <div className={`transition duration-300 ease-in-out flex justify-center fixed top-10 right-1 bg-white border border-orange-500 border-t-0 drop-shadow-md pl-4 pr-6 py-4 ${showUserDropdown ? 'opacity-100' : 'opacity-0'}`}>
+          <div className="flex flex-col gap-2">
+            <p className="cursor-pointer text-orange-500 hover:text-orange-700" onClick={() => {
+              toggleUserDropdown(false);
+              router.push('/user')
+            }}>Owner Profile</p>
+            <p className="cursor-pointer text-orange-500 hover:text-orange-700" onClick={() => {
+              toggleUserDropdown(false);
+              router.push('/user/settings')
+            }}>Settings</p>
+            <p className="cursor-pointer text-orange-500 hover:text-orange-700" onClick={() => {
+              toggleUserDropdown(false);
+              logout()
+            }}>Sign out</p>
+          </div>
         </div>
       </div>
+
     </div>
   );
 }

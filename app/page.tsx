@@ -1,6 +1,5 @@
 'use client';
 
-import Header from "@ui/header/Header";
 import { useAuthContext } from "@context/authProvider";
 import PageLoading from "@ui/PageLoading";
 import WelcomePage from "@ui/WelcomePage";
@@ -10,7 +9,6 @@ export default function Home() {
 
   return (
     <div className="h-screen w-screen">
-      <Header />
       <div>
         {isLoading &&
           <PageLoading />
