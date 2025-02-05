@@ -1,4 +1,4 @@
-import {ReactNode} from 'React';
+import {ReactNode} from 'react';
 import UserOptions from "./UserOptions";
 
 export default function Header(): ReactNode {
