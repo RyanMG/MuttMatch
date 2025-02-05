@@ -12,7 +12,7 @@ import {
 } from "@definitions/login";
 
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
+import Button from "@ui/common/Button";
 import LoginFormElement from "./LoginFormElement";
 
 export default function LoginPage(): ReactNode {
@@ -42,7 +42,7 @@ export default function LoginPage(): ReactNode {
   return (
     <div className="flex flex-col items-center justify-center h-full">
 
-      <div className="w-[350px] bg-gray-200 rounded-lg border border-orange-400 px-6 py-6">
+      <div className="w-[350px] bg-white rounded-lg border border-orange-400 px-6 py-6 drop-shadow-md">
         <div className="flex flex-row gap-2 justify-center pb-4">
           <div className="flex flex-col pt-1">
             <h1 className="text-black text-xl font-bold text-right">{"It's Ruff Without You!"}</h1>
@@ -88,13 +88,22 @@ export default function LoginPage(): ReactNode {
             />
           </LoginFormElement>
 
-          <div className="flex flex-row justify-center">
+          <div className="flex flex-row justify-center gap-2">
             <Button
-              variant="contained"
               type="submit"
-              disableElevation
+              theme="primary"
+              disabled={isPending}
             >
               {isPending ? "Submited..." : "Log in"}
+            </Button>
+            <Button
+              type="button"
+              theme="secondary"
+              onClick={() => {
+                router.push('/');
+              }}
+            >
+              <p>Cancel</p>
             </Button>
           </div>
         </form>
