@@ -27,11 +27,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white h-screen w-full`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white h-screen w-full overflow-hidden`}
       >
         <AuthProvider>
-          <Header />
-          {children}
+          <div className="flex flex-col h-screen">
+            <Header />
+            {children}
+          </div>
         </AuthProvider>
       </body>
     </html>
