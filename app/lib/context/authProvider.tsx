@@ -47,7 +47,7 @@ export default function AuthProvider ({children}:{children: ReactNode}): ReactNo
 
       setIsLoading(false);
     })()
-  }, [getStorageItem]);
+  }, []);
 
   /**
    * User signs in, set their details in local storage
