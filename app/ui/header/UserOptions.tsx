@@ -16,7 +16,7 @@ function UserIcon() {
  *
  */
 export default function UserOptions() {
-  const {isLoading, userDetails, logout} = useAuthContext();
+  const {isLoading, hasSession, userDetails, logout} = useAuthContext();
   const [showUserDropdown, setShowUserDropdown] = useState<boolean>(false);
 
   const toggleUserDropdown = () => {
@@ -32,13 +32,13 @@ export default function UserOptions() {
         }
         {!isLoading &&
           <>
-            {userDetails?.name &&
+            {hasSession?.current &&
               <div className="flex flex-row items-center gap-1" onClick={toggleUserDropdown}>
                 <UserIcon />
-                <p className="text-white">{`Hello ${userDetails?.name}!`}</p>
+                <p className="text-white">{`Hello ${userDetails?.current?.name}!`}</p>
               </div>
             }
-            {!userDetails?.name &&
+            {!hasSession?.current &&
               <Link href="/login">
                 <p className="text-white">Log in to access the app</p>
               </Link>
