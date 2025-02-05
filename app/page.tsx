@@ -1,12 +1,12 @@
 'use client';
 
 import Header from "@ui/header/Header";
-import Button from "@mui/material/Button";
 import { useAuthContext } from "@context/authProvider";
 import PageLoading from "@ui/PageLoading";
+import SearchFPO from "@ui/dog-search/SearchFPO";
 
 export default function Home() {
-  const {userDetails, isLoading, logout} = useAuthContext();
+  const {userDetails, isLoading} = useAuthContext();
 
   return (
     <div className="h-screen w-screen">
@@ -20,21 +20,12 @@ export default function Home() {
           <>
             {userDetails && userDetails?.name &&
               <>
-                <h1 className="text-black">{`Hello ${userDetails?.name}`}</h1>
-                <Button
-                  onClick={logout}
-                >
-                  Log out
-                </Button>
+               <SearchFPO />
               </>
             }
 
             {!userDetails &&
-              <Button
-                href="/login"
-              >
-                Log in
-              </Button>
+              <p>Log in to access the app</p>
             }
           </>
         }
