@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import LoginPage from "@ui/auth/LoginPage";
+import LoginPage from "@ui/login/LoginPage";
 
 export default function Login(): ReactNode {
   return (

@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuthContext } from "@context/authProvider";
-import PageLoading from "@ui/PageLoading";
+import PageLoading from "@ui/common/PageLoading";
 import WelcomePage from "@ui/WelcomePage";
 
 export default function Home() {
