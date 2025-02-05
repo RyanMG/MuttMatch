@@ -3,10 +3,10 @@
 import Header from "@ui/header/Header";
 import { useAuthContext } from "@context/authProvider";
 import PageLoading from "@ui/PageLoading";
-import SearchFPO from "@ui/dog-search/SearchFPO";
+import WelcomePage from "@ui/WelcomePage";
 
 export default function Home() {
-  const {userDetails, isLoading} = useAuthContext();
+  const {hasSession, isLoading} = useAuthContext();
 
   return (
     <div className="h-screen w-screen">
@@ -18,15 +18,11 @@ export default function Home() {
 
         {!isLoading &&
           <>
-            {userDetails && userDetails?.name &&
+            {hasSession &&
               <>
-               <SearchFPO />
               </>
             }
-
-            {!userDetails &&
-              <p>Log in to access the app</p>
-            }
+            <WelcomePage />
           </>
         }
 

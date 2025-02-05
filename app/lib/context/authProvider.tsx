@@ -1,6 +1,6 @@
 'use client';
 
-import {createContext, ReactNode, useCallback, useContext, useEffect, useState} from "react";
+import {createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState, RefObject} from "react";
 import useStorage from "@hooks/useLocalStorage";
 import {
   TLoginLoginDetails
@@ -15,12 +15,14 @@ import {useRouter} from 'next/navigation';
 const AuthContext = createContext<{
   setUser: (userDetails: TLoginLoginDetails) => void;
   logout: () => void;
-  userDetails: TLoginLoginDetails | null;
+  userDetails: RefObject<TLoginLoginDetails | null> | null;
+  hasSession: RefObject<boolean> | null;
   isLoading: boolean;
 }>({
   setUser: () => null,
   logout: () => null,
   userDetails: null,
+  hasSession: null,
   isLoading: true
 });
 
@@ -36,7 +38,8 @@ export default function AuthProvider ({children}:{children: ReactNode}): ReactNo
   } = useStorage();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [userDetails, setUserDetails] = useState<TLoginLoginDetails | null>(null);
+  const userDetails = useRef<TLoginLoginDetails | null>(null);
+  const hasSession = useRef<boolean>(false);
 
   /**
    * Initial load
@@ -45,7 +48,8 @@ export default function AuthProvider ({children}:{children: ReactNode}): ReactNo
     (async ():Promise<void> => {
       const user = await getStorageItem(USER_STORAGE_TOKEN);
       if (user && 'name' in user) {
-        setUserDetails(user);
+        userDetails.current = user;
+        hasSession.current = true;
       }
 
       setIsLoading(false);
@@ -55,9 +59,10 @@ export default function AuthProvider ({children}:{children: ReactNode}): ReactNo
   /**
    * User signs in, set their details in local storage
    */
-  const setUser = useCallback(async (userDetails: TLoginLoginDetails): Promise<void> => {
-    setStorageItem(USER_STORAGE_TOKEN, userDetails);
-    setUserDetails(userDetails);
+  const setUser = useCallback(async (user: TLoginLoginDetails): Promise<void> => {
+    setStorageItem(USER_STORAGE_TOKEN, user);
+    userDetails.current = user;
+    hasSession.current = true;
   }, [setStorageItem]);
 
   /**
@@ -66,10 +71,10 @@ export default function AuthProvider ({children}:{children: ReactNode}): ReactNo
   const logout = useCallback(async (): Promise<void> => {
     try {
       const wasLoggedOut: boolean = await signOut();
-;
       if (wasLoggedOut) {
         removeStorageItem(USER_STORAGE_TOKEN);
-        setUserDetails(null);
+        userDetails.current = null;
+        hasSession.current = false;
         router.push('/login');
 
       } else {
@@ -87,6 +92,7 @@ export default function AuthProvider ({children}:{children: ReactNode}): ReactNo
         setUser,
         logout,
         userDetails,
+        hasSession,
         isLoading
       }}
     >
