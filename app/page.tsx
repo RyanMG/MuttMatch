@@ -9,9 +9,9 @@ export default function Home() {
   const {userDetails, isLoading, signOut} = useAuthContext();
 
   return (
-    <>
+    <div className="h-screen w-screen">
       <Header />
-      <div className="h-screen">
+      <div>
         {isLoading &&
           <PageLoading />
         }
@@ -40,6 +40,6 @@ export default function Home() {
         }
 
       </div>
-    </>
+    </div>
   );
 }
