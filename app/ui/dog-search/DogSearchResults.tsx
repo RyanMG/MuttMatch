@@ -50,14 +50,13 @@ export default function DogSearchResults({
   }, [searchParams]);
 
   return (
-    <div className="overflow-hidden">
+    <>
       {isLoading && <PageLoading />}
       {!isLoading &&
-        <div className="flex flex-wrap overflow-scroll">
+        <div className="flex flex-wrap overflow-scroll no-scrollbar">
           {searchResults.current.map((result: TDog) => <DogCard key={result.id} dog={result} />)}
         </div>
       }
-
-    </div>
+    </>
   )
 }

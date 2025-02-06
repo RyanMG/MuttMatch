@@ -15,7 +15,7 @@ function TextBlock({children}: {children: ReactNode}) {
  */
 export default function Home(): ReactNode {
   return (
-    <div className="flex-1 h-full overflow-y-scroll">
+    <div className="flex-1 h-full overflow-y-scroll no-scrollbar">
       <div className="flex flex-col items-center justify-center p-2 overflow-y-scroll">
 
         <section className="flex flex-col border border-orange-400 rounded-lg w-[350px] md:w-[550px] md:mt-10 px-6 py-4">
