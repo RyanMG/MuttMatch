@@ -7,7 +7,7 @@ export default function Logout(): ReactNode {
   const {logout} = useAuthContext();
   setTimeout(() => {
     logout();
-  }, 2000);
+  }, 3000);
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center">

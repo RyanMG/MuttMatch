@@ -1,48 +1,60 @@
-'use server';
+'use client';
 
-import { ReactNode } from "react"
-import { redirect } from 'next/navigation';
+import { ReactNode, useState, useEffect, useRef } from "react"
+import { useRouter } from 'next/navigation';
+import PageLoading from "@ui/common/PageLoading";
+import DogCard from "@ui/dog-search/DogCard";
+
 import {
   searchDogs
 } from "@api/dogs";
 
 import {
+  TDog,
   ISearchDogs
 } from "@definitions/dogs";
 
-export default async function DogSearchResults({
+export default function DogSearchResults({
   searchParams
 }: {
-  searchParams: Promise<{
+  searchParams: {
     query?: string
     page?: string
-  }> | undefined
-}): Promise<ReactNode> {
-  const params = await searchParams;
+  } | undefined
+}): ReactNode {
   const query = {} as ISearchDogs;
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const searchResults = useRef<TDog[]>([] as TDog[]);
 
-  if (params) {
-    query.from = (Number(params.page) ?? "1") as ISearchDogs['from'];
+  if (searchParams) {
+    query.from = (Number(searchParams.page) || "1") as ISearchDogs['from'];
   }
 
-  const searchResults = await searchDogs(query);
+  useEffect(() => {
+    (async () => {
+      const resp = await searchDogs(query);
+      if ('error' in resp) {
+        if (resp.error === "Unauthorized") {
+          router.push('/logout');
+        }
+        return;
+      }
 
-  if ('error' in searchResults) {
-    if (searchResults.error === "Unauthorized") {
-      redirect('/logout');
-    }
-    return;
-  }
+      searchResults.current = resp;
+      setIsLoading(false);
+    })();
+  }, [searchParams]);
 
   return (
-    <div>
-      <h1>Search Results</h1>
-      {searchResults && searchResults.map(result => (
-        <div key={result.id}>
-          <p>{result.name}</p>
-          <p>{result.breed}</p>
+    <div className="overflow-hidden">
+      {isLoading && <PageLoading />}
+      {!isLoading &&
+        <div className="flex flex-wrap overflow-scroll">
+          {searchResults.current.map((result: TDog) => <DogCard key={result.id} dog={result} />)}
         </div>
-      ))}
+      }
+
     </div>
   )
 }

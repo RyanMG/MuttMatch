@@ -20,6 +20,8 @@ export default async function SearchDogs({
   }> | undefined
 }): Promise<ReactNode> {
 
+  const params = await searchParams;
+
   return (
     <PageWrapper pageTitle="Search Dogs">
       <Suspense fallback={<Loading />}>
@@ -27,7 +29,7 @@ export default async function SearchDogs({
       </Suspense>
 
       <Suspense>
-        <DogSearchResults searchParams={searchParams} />
+        <DogSearchResults searchParams={params} />
       </Suspense>
     </PageWrapper>
   );

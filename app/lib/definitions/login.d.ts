@@ -11,4 +11,5 @@ export type TLoginFormState = {
   message?: string;
   prevState?: TLoginForm;
   success: boolean;
+  cookie?: string | null;
 };

@@ -1,4 +1,5 @@
-'use server';
+'use client';
+
 import {API_ROOT} from "@constants/api";
 import {
   TLoginLoginDetails,
@@ -46,7 +47,9 @@ export const signIn = async (prevState: TLoginFormState | null, formData: FormDa
       },
       body: JSON.stringify(validatedFields.data)
     })
-      .then(payload => payload.text());
+      .then(payload => {
+        return payload.text()
+      });
 
     if (resp !== 'OK') {
       return {

@@ -1,4 +1,4 @@
-'use server';
+'use client';
 
 import {DOGS_ROOT} from "@constants/api";
 import {
@@ -17,6 +17,10 @@ export async function getDogBreeds(): Promise<string[]> {
     const resp = await fetch(`${DOGS_ROOT}/breeds`, {
       method: "GET",
       credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      }
     })
       .then(payload => payload.json());
 
@@ -44,6 +48,10 @@ export async function searchDogs({
     const resp: TDogSearchResponse | string = await fetch(`${DOGS_ROOT}/search?from=${from}&size=${size}&sort=${sort}`, {
       method: "GET",
       credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      }
     })
       .then(payload => {
         if (!payload.ok) {
@@ -52,6 +60,7 @@ export async function searchDogs({
 
         return payload.json();
      });
+
 
     console.log('resp', resp)
 
@@ -78,13 +87,15 @@ export async function searchDogs({
  */
 export async function retreiveDogsById(idList: TDogID[]): Promise<TDog[]> {
   try {
+    console.log('retreiveDogsById url is:', `${DOGS_ROOT}`)
     const resp = await fetch(`${DOGS_ROOT}`, {
       method: "POST",
       credentials: "include",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
       },
-      body: JSON.stringify({idList})
+      body: JSON.stringify(idList)
     })
       .then(payload => payload.json());
 
@@ -106,7 +117,8 @@ export async function getDogMatchById(idList: TDogID[]): Promise<TDog> {
       method: "POST",
       credentials: "include",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
       },
       body: JSON.stringify({idList})
     })

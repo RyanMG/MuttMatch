@@ -23,6 +23,7 @@
       "@api/*": ["./app/api/*"],
       "@definitions/*": ["./app/lib/definitions/*"],
       "@hooks/*": ["./app/lib/hooks/*"],
+      "@singletons/*": ["./app/lib/singletons/*"],
       "@ui/*": ["./app/ui/*"],
       "@constants/*": ["./app/lib/constants/*"],
       "@context/*": ["./app/lib/context/*"]
