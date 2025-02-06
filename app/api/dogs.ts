@@ -9,6 +9,15 @@ import {
   ISearchDogs
 } from "@definitions/dogs";
 
+
+const parsePayload = (payload: Response) => {
+  if (!payload.ok) {
+    return payload.text();
+  }
+
+  return payload.json();
+}
+
 /*
  * GET list of dog breeds from the remote
  */
@@ -22,7 +31,7 @@ export async function getDogBreeds(): Promise<string[]> {
         "Access-Control-Allow-Origin": "*"
       }
     })
-      .then(payload => payload.json());
+      .then(parsePayload);
 
     return resp;
 
@@ -43,9 +52,9 @@ export async function searchDogs({
   size = 10,
   from = 1,
   sort = "breed:asc"
-}: ISearchDogs): Promise<TDog[] | {error: string}> {
+}: ISearchDogs): Promise<TDog[] | {error: string} | "Unauthorized"> {
   try {
-    const resp: TDogSearchResponse | string = await fetch(`${DOGS_ROOT}/search?from=${from}&size=${size}&sort=${sort}`, {
+    const resp: TDogSearchResponse | "Unauthorized" = await fetch(`${DOGS_ROOT}/search?from=${from}&size=${size}&sort=${sort}`, {
       method: "GET",
       credentials: "include",
       headers: {
@@ -53,26 +62,23 @@ export async function searchDogs({
         "Access-Control-Allow-Origin": "*"
       }
     })
-      .then(payload => {
-        if (!payload.ok) {
-          return payload.text();
-        }
+      .then(parsePayload);
 
-        return payload.json();
-     });
-
-
-    console.log('resp', resp)
-
-    if (typeof resp === "string") {
-      return {
-        error: resp
-      };
+    if (resp === "Unauthorized") {
+      return "Unauthorized";
     }
 
-    const dogs: TDog[] = await retreiveDogsById(resp.resultIds);
+    const dogsByIdResp: TDog[] | {error: string} | "Unauthorized" = await retreiveDogsById(resp.resultIds!);
 
-    return dogs;
+    if (dogsByIdResp === "Unauthorized") {
+      return "Unauthorized";
+    }
+
+    if ('error' in dogsByIdResp) {
+      return dogsByIdResp;
+    }
+
+    return dogsByIdResp;
 
   } catch (err) {
     console.error("Error getting dog breeds:", err);
@@ -85,9 +91,8 @@ export async function searchDogs({
 /*
  * POST a list of dog IDs to get the full record data
  */
-export async function retreiveDogsById(idList: TDogID[]): Promise<TDog[]> {
+export async function retreiveDogsById(idList: TDogID[]): Promise<TDog[] | {error: string} | "Unauthorized"> {
   try {
-    console.log('retreiveDogsById url is:', `${DOGS_ROOT}`)
     const resp = await fetch(`${DOGS_ROOT}`, {
       method: "POST",
       credentials: "include",
@@ -97,23 +102,50 @@ export async function retreiveDogsById(idList: TDogID[]): Promise<TDog[]> {
       },
       body: JSON.stringify(idList)
     })
-      .then(payload => payload.json());
+      .then(parsePayload);
 
     return resp;
 
   } catch (err) {
-    console.error("Error getting dog breeds:", err);
-    return [];
+    console.error("Error getting dogs by ID list:", err);
+    return {
+      error: "Error getting dogs"
+    };
   }
 }
 
+/*
+ * POST a single dog ID to get its data
+ */
+export async function getDogById(id: TDogID): Promise<TDog | { error: string } | "Unauthorized"> {
+  try {
+    const resp = await retreiveDogsById([id]);
+
+    if (resp === "Unauthorized") {
+      return "Unauthorized";
+    }
+
+    if (!resp || 'error' in resp) {
+      return {
+        error: "Dog not found for the provided ID"
+      }
+    }
+    return resp[0];
+
+  } catch (err) {
+    console.error("Error getting dog:", err);
+    return {
+      error: "Error getting dog"
+    };
+  }
+}
 
 /*
  * POST a list of dog IDs to get a single best match
  */
-export async function getDogMatchById(idList: TDogID[]): Promise<TDog> {
+export async function getDogMatchById(idList: TDogID[]): Promise<TDog | { error: string } | "Unauthorized"> {
   try {
-    const resp:TDogMatch = await fetch(`${DOGS_ROOT}/match`, {
+    const resp:TDogMatch | "Unauthorized" = await fetch(`${DOGS_ROOT}/match`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -122,14 +154,27 @@ export async function getDogMatchById(idList: TDogID[]): Promise<TDog> {
       },
       body: JSON.stringify({idList})
     })
-      .then(payload => payload.json());
+      .then(parsePayload);
 
-    const dog = await retreiveDogsById([resp.match]);
+    if (resp === "Unauthorized") {
+      return "Unauthorized";
+    }
 
-    return dog[0];
+    const dogResponse = await retreiveDogsById([resp.match]);
+    if (dogResponse === "Unauthorized") {
+      return "Unauthorized";
+    }
+
+    if ('error' in dogResponse) {
+      return dogResponse;
+    }
+
+    return dogResponse[0];
 
   } catch (err) {
-    console.error("Error getting dog breeds:", err);
-    return {} as TDog;
+    console.error("Error getting dog matches:", err);
+    return {
+      error: "Error getting dog matches"
+    };
   }
 }

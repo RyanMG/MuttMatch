@@ -34,10 +34,13 @@ export default function DogSearchResults({
   useEffect(() => {
     (async () => {
       const resp = await searchDogs(query);
+
+      if (resp === "Unauthorized") {
+        router.push('/logout');
+        return;
+      }
+
       if ('error' in resp) {
-        if (resp.error === "Unauthorized") {
-          router.push('/logout');
-        }
         return;
       }
 
