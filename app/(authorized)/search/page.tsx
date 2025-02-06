@@ -17,7 +17,10 @@ export default async function SearchDogs({
 
   return (
     <PageWrapper pageTitle="Search Dogs">
-      <Searchbar />
+      <Suspense>
+        <Searchbar />
+      </Suspense>
+
       <Suspense>
         <DogSearchResults searchParams={searchParams} />
       </Suspense>
