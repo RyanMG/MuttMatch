@@ -6,6 +6,11 @@ import Searchbar from "@ui/common/Searchbar";
 import { Suspense } from "react";
 import DogSearchResults from "@ui/dog-search/DogSearchResults";
 
+// FPO
+function Loading() {
+  return <h2>Loading...</h2>;
+}
+
 export default async function SearchDogs({
   searchParams
 }: {
@@ -17,7 +22,7 @@ export default async function SearchDogs({
 
   return (
     <PageWrapper pageTitle="Search Dogs">
-      <Suspense>
+      <Suspense fallback={<Loading />}>
         <Searchbar />
       </Suspense>
 
