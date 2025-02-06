@@ -34,13 +34,13 @@ export default function UserOptions() {
         }
         {!isLoading &&
           <>
-            {hasSession?.current &&
+            {hasSession &&
               <div className="flex flex-row items-center gap-1" onClick={() => toggleUserDropdown()}>
                 <UserIcon />
                 <p className="text-white">{`Hello ${userDetails?.current?.name}!`}</p>
               </div>
             }
-            {!hasSession?.current &&
+            {!hasSession &&
               <Link href="/login">
                 <p className="text-white">Log in to access the app</p>
               </Link>

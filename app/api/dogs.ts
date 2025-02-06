@@ -1,9 +1,12 @@
+'use server';
+
 import {DOGS_ROOT} from "@constants/api";
 import {
   TDogSearchResponse,
   TDogID,
   TDogMatch,
-  TDog
+  TDog,
+  ISearchDogs
 } from "@definitions/dogs";
 
 /*
@@ -28,29 +31,45 @@ export async function getDogBreeds(): Promise<string[]> {
 /*
  * GET matching results of dogs based on provided query filter
  */
-export async function searchDogs(): Promise<TDogSearchResponse[]> {
-  /**
-   * breeds
-   * zipCodes
-   * ageMin
-   * ageMax
-   *
-   * size
-   * from
-   * sort
-   */
+export async function searchDogs({
+  // breeds,
+  // zipCodes,
+  // ageMin,
+  // ageMax,
+  size = 10,
+  from = 1,
+  sort = "breed:asc"
+}: ISearchDogs): Promise<TDog[] | {error: string}> {
   try {
-    const resp = await fetch(`${DOGS_ROOT}/search`, {
+    const resp: TDogSearchResponse | string = await fetch(`${DOGS_ROOT}/search?from=${from}&size=${size}&sort=${sort}`, {
       method: "GET",
       credentials: "include",
     })
-      .then(payload => payload.json());
+      .then(payload => {
+        if (!payload.ok) {
+          return payload.text();
+        }
 
-    return resp;
+        return payload.json();
+     });
+
+    console.log('resp', resp)
+
+    if (typeof resp === "string") {
+      return {
+        error: resp
+      };
+    }
+
+    const dogs: TDog[] = await retreiveDogsById(resp.resultIds);
+
+    return dogs;
 
   } catch (err) {
     console.error("Error getting dog breeds:", err);
-    return [];
+    return {
+      error: "Error getting dog breeds"
+    }
   }
 }
 

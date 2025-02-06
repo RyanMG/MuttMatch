@@ -16,7 +16,7 @@ const AuthContext = createContext<{
   setUser: (userDetails: TLoginLoginDetails) => void;
   logout: () => void;
   userDetails: RefObject<TLoginLoginDetails | null> | null;
-  hasSession: RefObject<boolean> | null;
+  hasSession: boolean | null;
   isLoading: boolean;
 }>({
   setUser: () => null,
@@ -39,7 +39,7 @@ export default function AuthProvider ({children}:{children: ReactNode}): ReactNo
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const userDetails = useRef<TLoginLoginDetails | null>(null);
-  const hasSession = useRef<boolean>(false);
+  const [hasSession, setHasSession] = useState<boolean>(false);
 
   /**
    * Initial load
@@ -49,7 +49,7 @@ export default function AuthProvider ({children}:{children: ReactNode}): ReactNo
       const user = await getStorageItem(USER_STORAGE_TOKEN);
       if (user && 'name' in user) {
         userDetails.current = user;
-        hasSession.current = true;
+        setHasSession(true);
       }
 
       setIsLoading(false);
@@ -62,7 +62,7 @@ export default function AuthProvider ({children}:{children: ReactNode}): ReactNo
   const setUser = useCallback(async (user: TLoginLoginDetails): Promise<void> => {
     setStorageItem(USER_STORAGE_TOKEN, user);
     userDetails.current = user;
-    hasSession.current = true;
+    setHasSession(true);
   }, [setStorageItem]);
 
   /**
@@ -74,7 +74,7 @@ export default function AuthProvider ({children}:{children: ReactNode}): ReactNo
       if (wasLoggedOut) {
         removeStorageItem(USER_STORAGE_TOKEN);
         userDetails.current = null;
-        hasSession.current = false;
+        setHasSession(false);
         router.push('/login');
 
       } else {

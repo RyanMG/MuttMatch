@@ -3,7 +3,7 @@ import LoginPage from "@ui/login/LoginPage";
 
 export default function Login(): ReactNode {
   return (
-    <div className="flex-1 bg-violet-950 h-full">
+    <div className="flex-1 pt-20">
       <LoginPage />
     </div>
   );
