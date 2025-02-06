@@ -6,6 +6,7 @@ import {TDog} from '@definitions/dogs';
 import { getDogById } from "@api/dogs";
 import {useRouter} from 'next/navigation';
 import PageLoading from "@ui/common/PageLoading";
+import Button from "@ui/common/Button";
 
 export default function DogProfile({
   dogId,
@@ -66,26 +67,39 @@ export default function DogProfile({
   }
 
   return (
-    <div className="flex flex-row gap-3">
-      <div className="flex flex-col items-center justify-center">
-        <Image
-          src={dog.current?.img || "/missing.svg"}
-          alt={dog.current?.name || "Missing Dog"}
-          width={200}
-          height={200}
-        />
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <div className="flex flex-row gap-2">
-          <h2 className="text-4xl text-indigo-950">Say hello to</h2>
-          <h2 className="text-4xl font-bold text-orange-500">{dog.current?.name}!</h2>
+    <article className="flex flex-col gap-4">
+      <div className="flex flex-row gap-3">
+        <div className="flex flex-col items-center justify-center">
+          <Image
+            src={dog.current?.img || "/missing.svg"}
+            alt={dog.current?.name || "Missing Dog"}
+            width={200}
+            height={200}
+          />
         </div>
 
-        <p className="text-md text-indigo-950">{dog.current?.name} is an adorable {dog.current?.breed}, looking for a forever home!</p>
-        <p className="text-md text-indigo-950">{dog.current?.name} is {dog.current?.age}, {getAgeText(dog.current?.age)}</p>
-        <p className="text-md text-indigo-950">{dog.current?.name} is living in the {dog.current?.zip_code} area!</p>
+        <div className="flex flex-col gap-1">
+          <div className="flex flex-row gap-2">
+            <h2 className="text-4xl text-indigo-950">Say hello to</h2>
+            <h2 className="text-4xl font-bold text-orange-500">{dog.current?.name}!</h2>
+          </div>
+
+          <p className="text-md text-indigo-950">{dog.current?.name} is an adorable {dog.current?.breed}, looking for a forever home!</p>
+          <p className="text-md text-indigo-950">{dog.current?.name} is {dog.current?.age}, {getAgeText(dog.current?.age)}</p>
+          <p className="text-md text-indigo-950">{dog.current?.name} is living in the {dog.current?.zip_code} area!</p>
+        </div>
       </div>
-    </div>
+
+      <div className="flex flex-row gap-2">
+        <Button
+          type="button"
+          theme="secondary"
+          onClick={() => router.back()}
+        >
+          Back to search results
+        </Button>
+      </div>
+
+    </article>
   );
 }
