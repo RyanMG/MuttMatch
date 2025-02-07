@@ -8,7 +8,7 @@ import { useSearchFilterQueryContext } from "@context/searchFilterQueryProvider"
 export default function SearchFiltersWrapper(): ReactNode {
 
   const [filtersShown, setFiltersShown] = useState<boolean>(false);
-  const { applyFilters } = useSearchFilterQueryContext()
+  const { applyFilters, setPage } = useSearchFilterQueryContext()
 
   return (
     <div className="w-full flex flex-col">
@@ -31,6 +31,7 @@ export default function SearchFiltersWrapper(): ReactNode {
             type="button"
             theme="secondary"
             onClick={() => {
+              setPage(1);
               applyFilters();
               setFiltersShown(false);
             }}

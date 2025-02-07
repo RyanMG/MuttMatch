@@ -15,6 +15,8 @@ const SearchFilterQueryContext = createContext<{
   applyFilters: () => void;
   breeds: RefObject<string[]> | null;
   setBreeds: (breedList: string[]) => void;
+  currentPage: RefObject<number> | null;
+  setPage: (page: number) => void;
   searchResults: RefObject<TDog[]> | null;
   resultsLoading: boolean;
   totalResults: RefObject<number> | null;
@@ -23,6 +25,8 @@ const SearchFilterQueryContext = createContext<{
   applyFilters: () => null,
   breeds: null,
   setBreeds: () => null,
+  currentPage: null,
+  setPage: () => null,
   searchResults: null,
   resultsLoading: false,
   totalResults: null
@@ -41,13 +45,17 @@ export default function SearchFilterQueryProvider({
   const router = useRouter();
   const pathname = usePathname();
   const initialSearchParams = useSearchParams();
+
   const initialBreeds = initialSearchParams.getAll('breeds');
+  const initialPage = initialSearchParams.get('page');
+
   const searchResults = useRef<TDog[]>([] as TDog[]);
-  const totalResults = useRef<number>(0);
+  const totalResults = useRef<number>(1);
 
   const [resultsLoading, setResultsLoading] = useState<boolean>(true);
 
   const breeds = useRef<string[]>(initialBreeds ? initialBreeds : []);
+  const currentPage = useRef<number>(initialPage ? Number(initialPage) : 1);
 
   const query = useRef<URLSearchParams>(new URLSearchParams(initialSearchParams));
 
@@ -55,12 +63,17 @@ export default function SearchFilterQueryProvider({
     breeds.current = breedList;
   }
 
+  const setPage = (newPage: number) => {
+    currentPage.current = newPage;
+    applyFilters();
+  }
+
   /**
    * Apply the currently selected filter into the URL params
    */
   const applyFilters = useCallback(async () => {
     const params = query.current;
-    params.set('page', '1');
+    params.set('page', currentPage.current.toString());
 
     params.delete('breeds');
 
@@ -86,10 +99,14 @@ export default function SearchFilterQueryProvider({
     fetchSearchResults();
   }, [query, breeds]);
 
+  /**
+   * Fetch results
+   */
   const fetchSearchResults = useCallback(async () => {
     setResultsLoading(true);
     const resp = await searchDogs({
-      breeds: breeds?.current
+      breeds: breeds?.current,
+      page: currentPage.current,
     });
 
     if (resp === "Unauthorized") {
@@ -117,6 +134,8 @@ export default function SearchFilterQueryProvider({
         applyFilters,
         breeds,
         setBreeds,
+        currentPage,
+        setPage,
         searchResults,
         resultsLoading,
         totalResults

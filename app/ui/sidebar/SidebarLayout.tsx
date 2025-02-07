@@ -31,12 +31,12 @@ export default function SidebarLayout() {
           </div>
 
           <div className={`border-t border-indigo-600 pt-2 mt-1 ${linksDropdownShown ? 'flex' : 'hidden'}`}>
-            <SidebarItem text="Search Dogs" link="/search" />
+            <SidebarItem text="Search Dogs" link="/search?page=1" />
           </div>
         </div>
 
         <div className="hidden md:block">
-          <SidebarItem text="Search Dogs" link="/search" />
+          <SidebarItem text="Search Dogs" link="/search?page=1" />
         </div>
       </div>
     </aside>

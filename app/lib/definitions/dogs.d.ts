@@ -31,6 +31,6 @@ export interface ISearchDogs {
   ageMin?: number;
   ageMax?: number;
   size?: number;
-  from?: number;
+  page?: number;
   sort?: string;
 }

@@ -18,7 +18,6 @@ import {
 export default function DogSearchResults(): ReactNode {
   const {resultsLoading, searchResults, totalResults} = useSearchFilterQueryContext();
 
-  console.log('searchResults', searchResults)
   return (
     <>
       {resultsLoading && <PageLoading />}
@@ -27,7 +26,9 @@ export default function DogSearchResults(): ReactNode {
           <CurrentResultFiltersNotice />
           <div className="flex flex-wrap overflow-scroll no-scrollbar">
             {!searchResults && <p>no results</p>}
-            {searchResults && searchResults.current.map((result: TDog) => <DogCard key={result.id} dog={result} />)}
+            {searchResults && searchResults.current.map((result: TDog) => {
+              return <DogCard key={result.id} dog={result} />
+            })}
           </div>
           <div className="mt-5 flex w-full justify-center">
             <Pagination totalPages={getTotalPages(totalResults?.current, NUM_RESULTS_PER_PAGE)} />

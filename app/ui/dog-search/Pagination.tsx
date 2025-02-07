@@ -2,30 +2,20 @@
 
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
-import Link from 'next/link';
 import { generatePagination } from '@utils/paginationUtils';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { useSearchFilterQueryContext } from '@context/searchFilterQueryProvider';
 
 export default function Pagination({ totalPages }: { totalPages: number }) {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const currentPage = Number(searchParams.get('page')) || 1;
-
-  const createPageURL = (pageNumber: number | string) => {
-    const params = new URLSearchParams(searchParams);
-    params.set('page', pageNumber.toString());
-    return `${pathname}?${params.toString()}`;
-  };
-
-  const allPages = generatePagination(currentPage, totalPages);
+  const { currentPage, setPage } = useSearchFilterQueryContext();
+  const allPages = generatePagination(currentPage?.current || 1, totalPages);
 
   return (
     <>
       <div className="inline-flex">
         <PaginationArrow
           direction="left"
-          href={createPageURL(currentPage - 1)}
-          isDisabled={currentPage <= 1}
+          onClick={() => setPage(currentPage!.current - 1)}
+          isDisabled={currentPage!.current! <= 1}
         />
 
         <div className="flex -space-x-px">
@@ -39,11 +29,15 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
 
             return (
               <PaginationNumber
-                key={page}
-                href={createPageURL(page)}
+                key={index}
+                onClick={() => {
+                  if (typeof page === 'number') {
+                    setPage(page);
+                  }
+                }}
                 page={page}
                 position={position}
-                isActive={currentPage === page}
+                isActive={currentPage!.current! === page}
               />
             );
           })}
@@ -51,8 +45,8 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
 
         <PaginationArrow
           direction="right"
-          href={createPageURL(currentPage + 1)}
-          isDisabled={currentPage >= totalPages}
+          onClick={() => setPage(currentPage!.current! + 1)}
+          isDisabled={currentPage!.current! >= totalPages}
         />
       </div>
     </>
@@ -61,12 +55,12 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
 
 function PaginationNumber({
   page,
-  href,
+  onClick,
   isActive,
   position,
 }: {
   page: number | string;
-  href: string;
+  onClick: () => void;
   position?: 'first' | 'last' | 'middle' | 'single';
   isActive: boolean;
 }) {
@@ -84,18 +78,18 @@ function PaginationNumber({
   return isActive || position === 'middle' ? (
     <div className={className}>{page}</div>
   ) : (
-    <Link href={href} className={className}>
+    <div onClick={onClick} className={className}>
       {page}
-    </Link>
+    </div>
   );
 }
 
 function PaginationArrow({
-  href,
+  onClick,
   direction,
   isDisabled,
 }: {
-  href: string;
+  onClick: () => void;
   direction: 'left' | 'right';
   isDisabled?: boolean;
 }) {
@@ -119,8 +113,8 @@ function PaginationArrow({
   return isDisabled ? (
     <div className={className}>{icon}</div>
   ) : (
-    <Link className={className} href={href}>
+    <button className={className} onClick={onClick}>
       {icon}
-    </Link>
+    </button>
   );
 }

@@ -73,7 +73,7 @@ export async function searchDogs({
   // zipCodes,
   // ageMin,
   // ageMax,
-  from = 1,
+  page = 1,
   sort = "breed:asc"
 }: ISearchDogs): Promise<TSearchDogsResponse | {error: string} | "Unauthorized"> {
 
@@ -81,6 +81,8 @@ export async function searchDogs({
   if (breeds && breeds.length > 0) {
     filterQuery += breeds.reduce((acc, breed) => acc += `&breeds=${breed.split(' ').join('+')}`, "");
   }
+
+  const from = (page - 1) * NUM_RESULTS_PER_PAGE;
 
   try {
     const resp: TDogSearchResponse | "Unauthorized" = await fetch(`${DOGS_ROOT}/search?from=${from}&size=${NUM_RESULTS_PER_PAGE}&sort=${sort}${filterQuery}`, {
