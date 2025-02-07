@@ -3,6 +3,7 @@
 import { ReactNode } from "react";
 import PageWrapper from "@ui/common/PageWrapper";
 import SearchFilters from "@ui/dog-search/SearchFilters";
+import Divider from "@ui/common/Divider";
 import { Suspense } from "react";
 import DogSearchResults from "@ui/dog-search/DogSearchResults";
 
@@ -27,6 +28,8 @@ export default async function SearchDogs({
       <Suspense fallback={<Loading />}>
         <SearchFilters />
       </Suspense>
+
+      <Divider />
 
       <Suspense>
         <DogSearchResults searchParams={params} />
