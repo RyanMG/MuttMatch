@@ -12,7 +12,7 @@ export default function PageWrapper({
       {pageTitle && (
         <>
           <h1 className="text-2xl font-bold text-indigo-950">{pageTitle}</h1>
-          <div className="w-full border-b border-indigo-950 pb-1 mb-4" />
+          <div className="w-full border-b border-indigo-950 pb-1 mb-2" />
         </>
       )}
       {children}

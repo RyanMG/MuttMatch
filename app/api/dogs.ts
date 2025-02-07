@@ -8,15 +8,7 @@ import {
   TDog,
   ISearchDogs
 } from "@definitions/dogs";
-
-
-const parsePayload = (payload: Response) => {
-  if (!payload.ok) {
-    return payload.text();
-  }
-
-  return payload.json();
-}
+import { parsePayload } from "@utils/apiUtils";
 
 /*
  * GET list of dog breeds from the remote

@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 import PageWrapper from "@ui/common/PageWrapper";
-import Searchbar from "@ui/common/Searchbar";
+import SearchFilters from "@ui/dog-search/SearchFilters";
 import { Suspense } from "react";
 import DogSearchResults from "@ui/dog-search/DogSearchResults";
 
@@ -25,7 +25,7 @@ export default async function SearchDogs({
   return (
     <PageWrapper pageTitle="Search Dogs">
       <Suspense fallback={<Loading />}>
-        <Searchbar />
+        <SearchFilters />
       </Suspense>
 
       <Suspense>

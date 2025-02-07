@@ -73,6 +73,7 @@ export const signIn = async (prevState: TLoginFormState | null, formData: FormDa
 }
 
 export const signOut = async ():Promise<boolean> => {
+  debugger;
   try {
     const resp = await fetch(`${API_ROOT}/auth/logout`, {
       method: "POST",
