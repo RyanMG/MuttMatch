@@ -1,21 +1,42 @@
 'use client';
 
-import {DOGS_ROOT} from "@constants/api";
+import {
+  DOGS_ROOT,
+  NUM_RESULTS_PER_PAGE
+} from "@constants/api";
 import {
   TDogSearchResponse,
   TDogID,
   TDogMatch,
   TDog,
-  ISearchDogs
+  ISearchDogs,
+  TSearchDogsResponse
 } from "@definitions/dogs";
 import { parsePayload } from "@utils/apiUtils";
 
+const breedsCache: string[] = [];
+
+const filterBreedsBySearchTerm = (breeds: string[], searchTerm?: string, currentSelections: string[] = []): string[] => {
+  if (!searchTerm) {
+    return breeds
+      .slice(0, 10)
+      .filter(breed => !currentSelections.includes(breed));
+  }
+
+  return breeds
+    .filter(breed => !currentSelections.includes(breed) && breed.toLowerCase().includes(searchTerm.toLowerCase()))
+    .slice(0, 10);
+}
 /*
  * GET list of dog breeds from the remote
  */
-export async function getDogBreeds(): Promise<string[] | { error: string } | "Unauthorized"> {
+export async function getDogBreeds(searchTerm?: string, currentSelections: string[] = []): Promise<string[] | { error: string } | "Unauthorized"> {
   try {
-    const resp = await fetch(`${DOGS_ROOT}/breeds`, {
+    if (breedsCache.length > 0) {
+      return filterBreedsBySearchTerm(breedsCache, searchTerm, currentSelections);
+    }
+
+    const resp = await fetch(`${DOGS_ROOT}/breeds?search=${searchTerm}`, {
       method: "GET",
       credentials: "include",
       headers: {
@@ -25,7 +46,16 @@ export async function getDogBreeds(): Promise<string[] | { error: string } | "Un
     })
       .then(parsePayload);
 
-    return resp;
+    if (resp === "Unauthorized") {
+      return "Unauthorized";
+    }
+
+    if ('error' in resp) {
+      return resp;
+    }
+
+    breedsCache.push(...resp);
+    return filterBreedsBySearchTerm(breedsCache, searchTerm, currentSelections);
 
   } catch (err) {
     console.error("Error getting dog breeds:", err);
@@ -43,18 +73,17 @@ export async function searchDogs({
   // zipCodes,
   // ageMin,
   // ageMax,
-  size = 10,
   from = 1,
   sort = "breed:asc"
-}: ISearchDogs): Promise<TDog[] | {error: string} | "Unauthorized"> {
+}: ISearchDogs): Promise<TSearchDogsResponse | {error: string} | "Unauthorized"> {
 
   let filterQuery: string = "";
   if (breeds && breeds.length > 0) {
-    filterQuery += breeds.reduce((acc, breed) => acc += `&breed=${breed}`, "");
+    filterQuery += breeds.reduce((acc, breed) => acc += `&breeds=${breed.split(' ').join('+')}`, "");
   }
 
   try {
-    const resp: TDogSearchResponse | "Unauthorized" = await fetch(`${DOGS_ROOT}/search?from=${from}&size=${size}&sort=${sort}${filterQuery}`, {
+    const resp: TDogSearchResponse | "Unauthorized" = await fetch(`${DOGS_ROOT}/search?from=${from}&size=${NUM_RESULTS_PER_PAGE}&sort=${sort}${filterQuery}`, {
       method: "GET",
       credentials: "include",
       headers: {
@@ -78,7 +107,10 @@ export async function searchDogs({
       return dogsByIdResp;
     }
 
-    return dogsByIdResp;
+    return {
+      dogs: dogsByIdResp,
+      total: resp.total
+    };
 
   } catch (err) {
     console.error("Error getting dog breeds:", err);

@@ -14,12 +14,15 @@ importers:
       '@emotion/styled':
         specifier: ^11.14.0
         version: 11.14.0(@emotion/react@11.14.0(@types/react@19.0.8)(react@19.0.0))(@types/react@19.0.8)(react@19.0.0)
+      '@heroicons/react':
+        specifier: ^2.2.0
+        version: 2.2.0(react@19.0.0)
       '@mui/material':
         specifier: ^6.4.3
         version: 6.4.3(@emotion/react@11.14.0(@types/react@19.0.8)(react@19.0.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.8)(react@19.0.0))(@types/react@19.0.8)(react@19.0.0))(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      '@tanstack/react-query':
-        specifier: ^5.66.0
-        version: 5.66.0(react@19.0.0)
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       next:
         specifier: 15.1.6
         version: 15.1.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -276,6 +279,11 @@ packages:
   '@eslint/plugin-kit@0.2.5':
     resolution: {integrity: sha512-lB05FkqEdUg2AA0xEbUz0SnkXT1LcCTa438W4IWTUh4hdOnVbQyOJ81OrDXsJk/LSiJHubgGEFoR5EHq1NsH1A==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@heroicons/react@2.2.0':
+    resolution: {integrity: sha512-LMcepvRaS9LYHJGsF0zzmgKCUim/X3N/DQKc4jepAXJ7l8QxJ1PmxJzqplF2Z3FE4PqBAIGyJAQ/w4B5dsqbtQ==}
+    peerDependencies:
+      react: '>= 16 || ^19.0.0-rc'
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -592,14 +600,6 @@ packages:
 
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
-
-  '@tanstack/query-core@5.66.0':
-    resolution: {integrity: sha512-J+JeBtthiKxrpzUu7rfIPDzhscXF2p5zE/hVdrqkACBP8Yu0M96mwJ5m/8cPPYQE9aRNvXztXHlNwIh4FEeMZw==}
-
-  '@tanstack/react-query@5.66.0':
-    resolution: {integrity: sha512-z3sYixFQJe8hndFnXgWu7C79ctL+pI0KAelYyW+khaNJ1m22lWrhJU2QrsTcRKMuVPtoZvfBYrTStIdKo+x0Xw==}
-    peerDependencies:
-      react: ^18 || ^19
 
   '@types/conventional-commits-parser@5.0.1':
     resolution: {integrity: sha512-7uz5EHdzz2TqoMfV7ee61Egf5y6NkcO4FB/1iCCQnbeiI1F3xzv3vK5dBCXUCLQgGYS+mUeigK1iKQzvED+QnQ==}
@@ -2550,6 +2550,10 @@ snapshots:
       '@eslint/core': 0.10.0
       levn: 0.4.1
 
+  '@heroicons/react@2.2.0(react@19.0.0)':
+    dependencies:
+      react: 19.0.0
+
   '@humanfs/core@0.19.1': {}
 
   '@humanfs/node@0.16.6':
@@ -2799,13 +2803,6 @@ snapshots:
   '@swc/helpers@0.5.15':
     dependencies:
       tslib: 2.8.1
-
-  '@tanstack/query-core@5.66.0': {}
-
-  '@tanstack/react-query@5.66.0(react@19.0.0)':
-    dependencies:
-      '@tanstack/query-core': 5.66.0
-      react: 19.0.0
 
   '@types/conventional-commits-parser@5.0.1':
     dependencies:

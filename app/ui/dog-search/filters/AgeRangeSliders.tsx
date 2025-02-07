@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import Slider from "@mui/material/Slider";
 
 function valuetext(value: number) {

@@ -1,68 +1,36 @@
 'use client';
 
-import { ReactNode, useState, useEffect, useRef } from "react"
-import { useRouter } from 'next/navigation';
+import { ReactNode } from "react"
 import PageLoading from "@ui/common/PageLoading";
 import DogCard from "@ui/dog-search/DogCard";
 import CurrentResultFiltersNotice from "@ui/dog-search/CurrentResultFiltersNotice";
+import Pagination from "./Pagination";
+import { getTotalPages } from "@utils/paginationUtils";
+import { useSearchFilterQueryContext } from "@context/searchFilterQueryProvider";
+import {
+  NUM_RESULTS_PER_PAGE
+} from "@constants/api";
 
 import {
-  searchDogs
-} from "@api/dogs";
-
-import {
-  TDog,
-  ISearchDogs
+  TDog
 } from "@definitions/dogs";
 
-export default function DogSearchResults({
-  searchParams
-}: {
-  searchParams: {
-    breeds?: string
-    page?: string
-  } | undefined
-}): ReactNode {
-  const query = {} as ISearchDogs;
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const searchResults = useRef<TDog[]>([] as TDog[]);
+export default function DogSearchResults(): ReactNode {
+  const {resultsLoading, searchResults, totalResults} = useSearchFilterQueryContext();
 
-  if (searchParams) {
-    query.from = (Number(searchParams.page) || "1") as ISearchDogs['from'];
-    query.breeds = (searchParams.breeds?.split(',') || []) as ISearchDogs['breeds'];
-    // query.zipCodes = (Number(searchParams.page) || "1") as ISearchDogs['zipCodes'];
-    // query.ageMin = (Number(searchParams.page) || "1") as ISearchDogs['ageMin'];
-    // query.ageMax = (Number(searchParams.page) || "1") as ISearchDogs['ageMax'];
-    // query.size = (Number(searchParams.page) || "1") as ISearchDogs['size'];
-  }
-
-  useEffect(() => {
-    (async () => {
-      const resp = await searchDogs(query);
-
-      if (resp === "Unauthorized") {
-        router.push('/logout');
-        return;
-      }
-
-      if ('error' in resp) {
-        return;
-      }
-
-      searchResults.current = resp;
-      setIsLoading(false);
-    })();
-  }, [query]);
-
+  console.log('searchResults', searchResults)
   return (
     <>
-      {isLoading && <PageLoading />}
-      {!isLoading &&
+      {resultsLoading && <PageLoading />}
+      {!resultsLoading &&
         <>
-          <CurrentResultFiltersNotice queryOptions={query} />
+          <CurrentResultFiltersNotice />
           <div className="flex flex-wrap overflow-scroll no-scrollbar">
-            {searchResults.current.map((result: TDog) => <DogCard key={result.id} dog={result} />)}
+            {!searchResults && <p>no results</p>}
+            {searchResults && searchResults.current.map((result: TDog) => <DogCard key={result.id} dog={result} />)}
+          </div>
+          <div className="mt-5 flex w-full justify-center">
+            <Pagination totalPages={getTotalPages(totalResults?.current, NUM_RESULTS_PER_PAGE)} />
           </div>
       </>
       }

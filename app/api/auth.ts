@@ -30,7 +30,7 @@ export const signIn = async (prevState: TLoginFormState | null, formData: FormDa
     });
 
     if (!validatedFields.success) {
-      console.log('validatedFields', validatedFields);
+
       return {
         errors: validatedFields.error.flatten().fieldErrors,
         message: 'Missing fields. Failed to create new job.',

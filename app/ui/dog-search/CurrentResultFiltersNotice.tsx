@@ -1,37 +1,25 @@
 import { ReactNode } from "react"
-import {
-  ISearchDogs
-} from "@definitions/dogs";
+import { useSearchFilterQueryContext } from "@context/searchFilterQueryProvider";
 
-export default function CurrentResultFiltersNotice({
-  queryOptions
-}: {
-  queryOptions: ISearchDogs
-}): ReactNode {
-  console.log('queryOptions', queryOptions);
-  const {
-    breeds = [],
-    zipCodes = [],
-    ageMin = 0,
-    ageMax = 20
-  } = queryOptions;
+export default function CurrentResultFiltersNotice(): ReactNode {
+
+  const {breeds} = useSearchFilterQueryContext();
 
   let display: string = "Showing all results. To see more personalized pups, choose from the options above!"
 
-  if (breeds?.length > 0 || zipCodes?.length > 0 || ageMin !== 0 || ageMax !== 20) {
+  if (breeds?.current?.length) {
     display = "Currently showing results for";
 
-    if (breeds.length) {
-      display += ` ${breeds.join(', ')} breeds`;
+    if (breeds?.current?.length) {
+      display += ` ${breeds.current.join(', ')} breeds`;
     }
 
-    if (ageMin !== 0 || ageMax !== 20) {
-      display += ` between ${ageMin} and ${ageMax} years old`;
-    }
+    // if (ageMin !== 0 || ageMax !== 20) {
+    //   display += ` between ${ageMin} and ${ageMax} years old`;
+    // }
 
     display += "."
   }
-
 
   return (
     <div className="flex flex-row w-full flex-row items-center justify-center mb-2">

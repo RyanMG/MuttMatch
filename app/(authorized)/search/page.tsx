@@ -2,37 +2,33 @@
 
 import { ReactNode } from "react";
 import PageWrapper from "@ui/common/PageWrapper";
-import SearchFilters from "@ui/dog-search/SearchFilters";
+import SearchFiltersWrapper from "@ui/dog-search/SearchFiltersWrapper";
 import Divider from "@ui/common/Divider";
 import { Suspense } from "react";
 import DogSearchResults from "@ui/dog-search/DogSearchResults";
+import SearchFilterQueryProvider from "@context/searchFilterQueryProvider";
 
 // FPO
 function Loading() {
   return <h2>Loading...</h2>;
 }
 
-export default async function SearchDogs({
-  searchParams
-}: {
-  searchParams: Promise<{
-    query?: string
-    page?: string
-  }> | undefined
-}): Promise<ReactNode> {
-
-  const params = await searchParams;
+export default async function SearchDogs(): Promise<ReactNode> {
 
   return (
     <PageWrapper pageTitle="Search Dogs">
       <Suspense fallback={<Loading />}>
-        <SearchFilters />
-      </Suspense>
+        <SearchFilterQueryProvider>
+          <Suspense fallback={<Loading />}>
+            <SearchFiltersWrapper />
+          </Suspense>
 
-      <Divider />
+          <Divider />
 
-      <Suspense>
-        <DogSearchResults searchParams={params} />
+          <Suspense>
+            <DogSearchResults />
+          </Suspense>
+        </SearchFilterQueryProvider>
       </Suspense>
     </PageWrapper>
   );

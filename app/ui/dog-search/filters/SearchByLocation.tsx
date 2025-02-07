@@ -9,10 +9,8 @@ import {
 import { ReactNode, useEffect, useState } from "react";
 
 export default function SearchByLocation({
-  selectedLocation,
   handleChange
 }: {
-  selectedLocation: string | undefined;
   handleChange: (city : string, state: TStateAbbr) => void;
 }): ReactNode {
 

@@ -7,6 +7,11 @@ export type TDogSearchResponse = {
   total: number
 }
 
+export type TSearchDogsResponse = {
+  dogs: TDog[]
+  total: number
+}
+
 export type TDog = {
     id: TDogID
     img: string
