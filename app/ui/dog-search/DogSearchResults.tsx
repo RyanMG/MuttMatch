@@ -4,6 +4,7 @@ import { ReactNode, useState, useEffect, useRef } from "react"
 import { useRouter } from 'next/navigation';
 import PageLoading from "@ui/common/PageLoading";
 import DogCard from "@ui/dog-search/DogCard";
+import CurrentResultFiltersNotice from "@ui/dog-search/CurrentResultFiltersNotice";
 
 import {
   searchDogs
@@ -18,7 +19,7 @@ export default function DogSearchResults({
   searchParams
 }: {
   searchParams: {
-    query?: string
+    breeds?: string
     page?: string
   } | undefined
 }): ReactNode {
@@ -29,6 +30,11 @@ export default function DogSearchResults({
 
   if (searchParams) {
     query.from = (Number(searchParams.page) || "1") as ISearchDogs['from'];
+    query.breeds = (searchParams.breeds?.split(',') || []) as ISearchDogs['breeds'];
+    // query.zipCodes = (Number(searchParams.page) || "1") as ISearchDogs['zipCodes'];
+    // query.ageMin = (Number(searchParams.page) || "1") as ISearchDogs['ageMin'];
+    // query.ageMax = (Number(searchParams.page) || "1") as ISearchDogs['ageMax'];
+    // query.size = (Number(searchParams.page) || "1") as ISearchDogs['size'];
   }
 
   useEffect(() => {
@@ -47,15 +53,18 @@ export default function DogSearchResults({
       searchResults.current = resp;
       setIsLoading(false);
     })();
-  }, [searchParams]);
+  }, [query]);
 
   return (
     <>
       {isLoading && <PageLoading />}
       {!isLoading &&
-        <div className="flex flex-wrap overflow-scroll no-scrollbar">
-          {searchResults.current.map((result: TDog) => <DogCard key={result.id} dog={result} />)}
-        </div>
+        <>
+          <CurrentResultFiltersNotice queryOptions={query} />
+          <div className="flex flex-wrap overflow-scroll no-scrollbar">
+            {searchResults.current.map((result: TDog) => <DogCard key={result.id} dog={result} />)}
+          </div>
+      </>
       }
     </>
   )

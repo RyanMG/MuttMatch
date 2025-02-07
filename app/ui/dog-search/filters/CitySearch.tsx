@@ -67,7 +67,10 @@ export default function CitySearch({
           disablePortal
           disabled
           options={[]}
-          sx={{ width: 300 }}
+          sx={{
+            height: 50,
+            width: 300
+          }}
           renderInput={(params) => <TextField {...params} label="City" />}
         />
       )}
@@ -85,7 +88,10 @@ export default function CitySearch({
           onInputChange={(event, newInputValue) => {
             setInputValue(newInputValue);
           }}
-          sx={{ width: 300 }}
+          sx={{
+            height: 50,
+            width: 300
+          }}
           renderInput={(params) => <TextField {...params} label="City" />}
         />
       )}

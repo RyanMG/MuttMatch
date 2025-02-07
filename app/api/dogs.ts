@@ -13,7 +13,7 @@ import { parsePayload } from "@utils/apiUtils";
 /*
  * GET list of dog breeds from the remote
  */
-export async function getDogBreeds(): Promise<string[]> {
+export async function getDogBreeds(): Promise<string[] | { error: string } | "Unauthorized"> {
   try {
     const resp = await fetch(`${DOGS_ROOT}/breeds`, {
       method: "GET",
@@ -29,7 +29,9 @@ export async function getDogBreeds(): Promise<string[]> {
 
   } catch (err) {
     console.error("Error getting dog breeds:", err);
-    return [];
+    return {
+      error: "Error getting dog breeds"
+    };
   }
 }
 
@@ -37,7 +39,7 @@ export async function getDogBreeds(): Promise<string[]> {
  * GET matching results of dogs based on provided query filter
  */
 export async function searchDogs({
-  // breeds,
+  breeds,
   // zipCodes,
   // ageMin,
   // ageMax,
@@ -45,8 +47,14 @@ export async function searchDogs({
   from = 1,
   sort = "breed:asc"
 }: ISearchDogs): Promise<TDog[] | {error: string} | "Unauthorized"> {
+
+  let filterQuery: string = "";
+  if (breeds && breeds.length > 0) {
+    filterQuery += breeds.reduce((acc, breed) => acc += `&breed=${breed}`, "");
+  }
+
   try {
-    const resp: TDogSearchResponse | "Unauthorized" = await fetch(`${DOGS_ROOT}/search?from=${from}&size=${size}&sort=${sort}`, {
+    const resp: TDogSearchResponse | "Unauthorized" = await fetch(`${DOGS_ROOT}/search?from=${from}&size=${size}&sort=${sort}${filterQuery}`, {
       method: "GET",
       credentials: "include",
       headers: {

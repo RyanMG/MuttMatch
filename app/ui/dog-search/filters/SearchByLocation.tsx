@@ -6,23 +6,24 @@ import {
   TStateAbbr
 } from "@definitions/location";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
-// city - the full or partial name of a city
-// states - an array of two-letter state/territory abbreviations
-// geoBoundingBox - an object defining a geographic bounding box:
-//     This object must contain one of the following combinations of properties:
-//         top, left, bottom, right
-//         bottom_left, top_right
-//         bottom_right, top_left
-//     Each property should have the following data:
-//         lat - latitude
-//         lon - longitude
+export default function SearchByLocation({
+  selectedLocation,
+  handleChange
+}: {
+  selectedLocation: string | undefined;
+  handleChange: (city : string, state: TStateAbbr) => void;
+}): ReactNode {
 
-export default function SearchByLocation(): ReactNode {
   const [showLocationModal, setShowLocationModal] = useState<boolean>(false)
   const [state, setState] = useState<TStateAbbr>("" as TStateAbbr)
   const [citySelection, setCitySelection] = useState<string>("")
+
+  useEffect(() => {
+    if (!citySelection) return
+    handleChange(citySelection, state)
+  }, [citySelection])
 
   return (
     <div>
