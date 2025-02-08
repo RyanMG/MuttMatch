@@ -127,7 +127,7 @@ export default function SearchFilterQueryProvider({
 
   useEffect(() => {
     applyFilters();
-  }, [currentPage])
+  }, [currentPage, breeds])
 
   useEffect(() => {
     fetchSearchResults();
