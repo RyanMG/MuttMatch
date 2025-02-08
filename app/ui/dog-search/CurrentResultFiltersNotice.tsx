@@ -1,11 +1,12 @@
 import { ReactNode } from "react"
-import { useSearchFilterQueryContext } from "@context/searchFilterQueryProvider";
+import { useSearchParams } from "next/navigation";
 
 export default function CurrentResultFiltersNotice(): ReactNode {
 
-  const {breeds} = useSearchFilterQueryContext();
+  const searchParams = useSearchParams();
 
   let display: string = "Showing all results. To see more personalized pups, choose from the options above!"
+  const breeds = searchParams.getAll('breeds');
 
   if (breeds.length) {
     display = "Currently showing results for";

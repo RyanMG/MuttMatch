@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from "react"
+import { ReactNode, Suspense } from "react"
 import PageLoading from "@ui/common/PageLoading";
 import DogCard from "@ui/dog-search/DogCard";
 import CurrentResultFiltersNotice from "@ui/dog-search/CurrentResultFiltersNotice";
@@ -23,7 +23,10 @@ export default function DogSearchResults(): ReactNode {
       {resultsLoading && <PageLoading />}
       {!resultsLoading &&
         <>
-          <CurrentResultFiltersNotice />
+          <Suspense>
+            <CurrentResultFiltersNotice />
+          </Suspense>
+
           <div className="flex flex-wrap overflow-scroll no-scrollbar">
             {!searchResults && <p>no results</p>}
             {searchResults && searchResults.current.map((result: TDog) => {
