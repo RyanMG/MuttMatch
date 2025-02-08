@@ -1,18 +1,18 @@
 import { ReactNode, SyntheticEvent, useEffect, useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
-import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import { searchLocations } from "@api/locations";
 import {
   TStateAbbr,
   TLocationSearchResponse
 } from "@definitions/location";
+import { useSearchFilterQueryContext } from "@context/searchFilterQueryProvider";
 
 /**
  *
  */
-const buildCityOptions = (results: TLocationSearchResponse['results']): string[] => {
-  const citiesMap = results
+const buildCityOptions = (results: TLocationSearchResponse['results']): { [key: string]: string[] } => {
+  return results
     .reduce((acc, result) => {
       if (acc[result.city]) {
         acc[result.city].push(result.zip_code);
@@ -22,8 +22,6 @@ const buildCityOptions = (results: TLocationSearchResponse['results']): string[]
 
       return acc;
     }, {} as { [key: string]: string[] })
-
-    return Object.keys(citiesMap);
 }
 
 /**
@@ -41,6 +39,8 @@ export default function CitySearch({
   const [cityResults, setCityResults] = useState<string[]>([] as string[]);
   const [inputValue, setInputValue] = useState<string>("");
 
+  const { setZipCodes } = useSearchFilterQueryContext();
+
   useEffect(() => {
     (async () => {
       if (stateSelection !== "" as TStateAbbr && inputValue !== "") {
@@ -54,14 +54,16 @@ export default function CitySearch({
         if ('error' in resp) {
           return;
         }
+        const cityOptions = buildCityOptions(resp.results);
+        setCityResults(Object.keys(cityOptions));
 
-        setCityResults(buildCityOptions(resp.results));
+        setZipCodes(Object.values(cityOptions).flat());
       }
     })();
   }, [stateSelection, inputValue])
 
   return (
-    <FormControl sx={{ m: 1, minWidth: 120 }} size="small" className="w-full">
+    <>
       {stateSelection === "" as TStateAbbr && (
         <Autocomplete
           disablePortal
@@ -95,7 +97,6 @@ export default function CitySearch({
           renderInput={(params) => <TextField {...params} label="City" />}
         />
       )}
-    </FormControl>
-
+    </>
   );
 }

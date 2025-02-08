@@ -1,11 +1,20 @@
 'use client';
 
-import {createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState, Dispatch, SetStateAction, RefObject} from "react";
+import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState, Dispatch, SetStateAction, RefObject } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import {TDog} from '@definitions/dogs';
+import {
+  TDog
+} from '@definitions/dogs';
+import {
+  TStateAbbr
+} from '@definitions/location';
 import {
   searchDogs
 } from "@api/dogs";
+
+import {
+  getZipCodesByLocation
+} from "@api/locations";
 
 /**
  * CONTEXT
@@ -19,6 +28,12 @@ const SearchFilterQueryContext = createContext<{
   setPage: (page: number) => void;
   ageRange: number[];
   setAgeRange: (ages: number[]) => void;
+  state: TStateAbbr;
+  setState: (state: TStateAbbr) => void;
+  city: string;
+  setCity: (city: string) => void;
+  zipCodes: string[];
+  setZipCodes: (zipCodes: string[]) => void;
   searchResults: RefObject<TDog[]> | null;
   resultsLoading: boolean;
   totalResults: RefObject<number> | null;
@@ -32,6 +47,12 @@ const SearchFilterQueryContext = createContext<{
   setPage: () => null,
   ageRange: [0, 15],
   setAgeRange: () => null,
+  state: "" as TStateAbbr,
+  setState: () => null,
+  city: "",
+  setCity: () => null,
+  zipCodes: [],
+  setZipCodes: () => null,
   searchResults: null,
   resultsLoading: false,
   totalResults: null,
@@ -55,6 +76,8 @@ export default function SearchFilterQueryProvider({
   const initialBreeds = initialSearchParams.getAll('breeds');
   const initialPage = initialSearchParams.get('page');
   const initialAgeRange = [Number(initialSearchParams.get('minAge') || 0), Number(initialSearchParams.get('maxAge') || 15)];
+  const initialState = initialSearchParams.get('state') as TStateAbbr;
+  const initialCity = initialSearchParams.get('city') as string;
 
   const searchResults = useRef<TDog[]>([] as TDog[]);
   const totalResults = useRef<number>(1);
@@ -64,6 +87,9 @@ export default function SearchFilterQueryProvider({
   const [breeds, setBreeds] = useState<string[]>(initialBreeds ? initialBreeds : []);
   const [currentPage, setCurrentPage] = useState<number>(initialPage ? Number(initialPage) : 1);
   const [ageRange, setAgeRange] = useState<number[]>(initialAgeRange);
+  const [city, setCity] = useState<string>(initialCity);
+  const [state, setState] = useState<TStateAbbr>(initialState);
+  const [zipCodes, setZipCodes] = useState<string[]>([])
 
   const [shouldApplyFilters, setShouldApplyFilters] = useState<boolean>(false);
 
@@ -78,6 +104,9 @@ export default function SearchFilterQueryProvider({
     setBreeds([]);
     setCurrentPage(1);
     setAgeRange([0, 15]);
+    setZipCodes([]);
+    setState("" as TStateAbbr);
+    setCity("");
     setShouldApplyFilters(true);
   }
 
@@ -94,13 +123,13 @@ export default function SearchFilterQueryProvider({
       breeds.forEach(breed => params.append('breeds', breed))
     }
 
-    // if (city && state) {
-    //   params.set('city', `${city}`)
-    //   params.set('state', `${state}`)
-    // } else {
-    //   params.delete('city');
-    //   params.delete('state');
-    // }
+    if (city && state) {
+      params.set('city', `${city}`)
+      params.set('state', `${state}`)
+    } else {
+      params.delete('city');
+      params.delete('state');
+    }
 
     if (ageRange[0] !== 0) params.set('minAge', `${ageRange[0]}`)
     else params.delete('minAge');
@@ -110,17 +139,37 @@ export default function SearchFilterQueryProvider({
     router.replace(`${pathname}?${params.toString()}`);
     query.current = new URLSearchParams(params);
     fetchSearchResults();
-  }, [query, breeds, currentPage, ageRange]);
+  }, [query, breeds, currentPage, ageRange, city, state]);
 
   /**
    * Fetch results
    */
   const fetchSearchResults = useCallback(async () => {
     setResultsLoading(true);
+    let zipCodesMatches;
+    if (city && state && zipCodes.length === 0) {
+      zipCodesMatches = await getZipCodesByLocation({
+        city: city,
+        state: state
+      });
+
+      if (zipCodesMatches === "Unauthorized") {
+        router.push('/logout');
+        return;
+      }
+
+      if ('error' in zipCodesMatches) {
+        return;
+      }
+
+      setZipCodes(zipCodesMatches);
+    }
+
     const resp = await searchDogs({
       breeds: breeds,
       ageRange: ageRange,
       page: currentPage,
+      zipCodes: (zipCodes.length > 0 ? zipCodes : zipCodesMatches)
     });
 
     if (resp === "Unauthorized") {
@@ -135,7 +184,7 @@ export default function SearchFilterQueryProvider({
     searchResults.current = resp.dogs;
     totalResults.current = resp.total;
     setResultsLoading(false);
-  }, [breeds, currentPage, ageRange])
+  }, [breeds, currentPage, ageRange, zipCodes])
 
   useEffect(() => {
     fetchSearchResults();
@@ -159,6 +208,12 @@ export default function SearchFilterQueryProvider({
         setPage,
         ageRange,
         setAgeRange,
+        state,
+        setState,
+        city,
+        setCity,
+        zipCodes,
+        setZipCodes,
         searchResults,
         resultsLoading,
         totalResults,

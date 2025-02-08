@@ -6,20 +6,20 @@ import CitySearch from "./CitySearch"
 import {
   TStateAbbr
 } from "@definitions/location";
+import { useSearchFilterQueryContext } from "@context/searchFilterQueryProvider"
 
 export default function SearchByLocationModalContent({
-  state,
-  citySelection,
-  setState,
-  setCitySelection,
   setShowLocationModal
 }: {
-  state: TStateAbbr;
-  citySelection: string;
-  setState: (value: TStateAbbr) => void;
-  setCitySelection: (value: string) => void;
   setShowLocationModal: (value: boolean) => void;
 }): ReactNode {
+
+  const {
+    state,
+    setState,
+    city,
+    setCity
+  } = useSearchFilterQueryContext();
 
   return (
     <>
@@ -32,10 +32,10 @@ export default function SearchByLocationModalContent({
         </div>
         <div className="w-1/2">
           <CitySearch
-            citySelection={citySelection}
+            citySelection={city}
             stateSelection={state}
             handleChange={(val: string) => {
-              setCitySelection(val)
+              setCity(val)
             }}
           />
         </div>

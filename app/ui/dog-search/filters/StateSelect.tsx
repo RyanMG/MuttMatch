@@ -3,7 +3,6 @@
 import { ReactNode, SyntheticEvent } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import FormControl from "@mui/material/FormControl";
 import {STATE_OPTIONS,} from "@constants/states";
 import {
   TStateOption,
@@ -19,25 +18,23 @@ export default function StateSelect({
 }): ReactNode {
 
   return (
-    <FormControl sx={{ m: 1, minWidth: 120 }} size="small" className="w-full">
-      <Autocomplete
-        disablePortal
-        getOptionLabel={(option) => {
-          return option.label || "Choose a state";
-        }}
-        value={{
-          id: stateSelection,
-          label: STATE_OPTIONS.find((state) => state.id === stateSelection)?.label || ""
-        }}
-        onChange={(event: SyntheticEvent, newValue: TStateOption | null) => {
-          if (newValue) {
-            handleChange(newValue.id as TStateAbbr);
-          }
-        }}
-        options={STATE_OPTIONS}
-        sx={{ width: 300 }}
-        renderInput={(params) => <TextField {...params} label="State" />}
-      />
-    </FormControl>
+    <Autocomplete
+      disablePortal
+      getOptionLabel={(option) => {
+        return option.label || "Choose a state";
+      }}
+      value={{
+        id: stateSelection,
+        label: STATE_OPTIONS.find((state) => state.id === stateSelection)?.label || ""
+      }}
+      onChange={(event: SyntheticEvent, newValue: TStateOption | null) => {
+        if (newValue) {
+          handleChange(newValue.id as TStateAbbr);
+        }
+      }}
+      options={STATE_OPTIONS}
+      sx={{ width: 300 }}
+      renderInput={(params) => <TextField {...params} label="State" />}
+    />
   )
 }

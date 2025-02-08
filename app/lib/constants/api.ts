@@ -3,3 +3,8 @@ export const DOGS_ROOT = `${API_ROOT}/dogs`
 export const LOCATIONS_ROOT = `${API_ROOT}/locations`
 
 export const NUM_RESULTS_PER_PAGE = 20;
+
+export const HEADERS = {
+  "Content-Type": "application/json",
+  "Access-Control-Allow-Origin": "*"
+};

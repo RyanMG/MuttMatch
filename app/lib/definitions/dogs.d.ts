@@ -29,7 +29,6 @@ export interface ISearchDogs {
   breeds?: string[];
   zipCodes?: string[];
   ageRange?: number[];
-  size?: number;
   page?: number;
   sort?: string;
 }

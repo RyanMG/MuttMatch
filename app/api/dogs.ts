@@ -2,7 +2,8 @@
 
 import {
   DOGS_ROOT,
-  NUM_RESULTS_PER_PAGE
+  NUM_RESULTS_PER_PAGE,
+  HEADERS
 } from "@constants/api";
 import {
   TDogSearchResponse,
@@ -39,10 +40,7 @@ export async function getDogBreeds(searchTerm?: string, currentSelections: strin
     const resp = await fetch(`${DOGS_ROOT}/breeds?search=${searchTerm}`, {
       method: "GET",
       credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-      }
+      headers: HEADERS
     })
       .then(parsePayload);
 
@@ -70,7 +68,7 @@ export async function getDogBreeds(searchTerm?: string, currentSelections: strin
  */
 export async function searchDogs({
   breeds,
-  // zipCodes,
+  zipCodes,
   ageRange,
   page = 1,
   sort = "breed:asc"
@@ -85,16 +83,17 @@ export async function searchDogs({
     filterQuery += `&ageMin=${ageRange[0]}&ageMax=${ageRange[1]}`;
   }
 
+  if (zipCodes && zipCodes.length > 0) {
+    filterQuery += zipCodes.reduce((acc, zip) => acc += `&zipCodes=${zip}`, "");
+  }
+
   const from = (page - 1) * NUM_RESULTS_PER_PAGE;
 
   try {
     const resp: TDogSearchResponse | "Unauthorized" = await fetch(`${DOGS_ROOT}/search?from=${from}&size=${NUM_RESULTS_PER_PAGE}&sort=${sort}${filterQuery}`, {
       method: "GET",
       credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-      }
+      headers: HEADERS
     })
       .then(parsePayload);
 
@@ -133,10 +132,7 @@ export async function retreiveDogsById(idList: TDogID[]): Promise<TDog[] | {erro
     const resp = await fetch(`${DOGS_ROOT}`, {
       method: "POST",
       credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-      },
+      headers: HEADERS,
       body: JSON.stringify(idList)
     })
       .then(parsePayload);
@@ -185,10 +181,7 @@ export async function getDogMatchById(idList: TDogID[]): Promise<TDog | { error:
     const resp:TDogMatch | "Unauthorized" = await fetch(`${DOGS_ROOT}/match`, {
       method: "POST",
       credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-      },
+      headers: HEADERS,
       body: JSON.stringify({idList})
     })
       .then(parsePayload);

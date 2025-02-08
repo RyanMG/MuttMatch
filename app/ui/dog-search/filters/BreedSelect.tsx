@@ -58,6 +58,7 @@ export default function BreedSelect(): ReactNode {
       <FormControl sx={{ m: 1, minWidth: 120 }} size="small" className="w-full">
         <Autocomplete
           disablePortal
+          size="small"
           options={searchResults}
           value={""}
           onChange={(event: SyntheticEvent, newValue: string | null) => {
