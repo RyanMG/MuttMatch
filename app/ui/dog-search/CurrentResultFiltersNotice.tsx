@@ -7,17 +7,18 @@ export default function CurrentResultFiltersNotice(): ReactNode {
 
   let display: string = "Showing all results. To see more personalized pups, choose from the options above!"
   const breeds = searchParams.getAll('breeds');
+  const minAge = Number(searchParams.get('minAge') || 0);
+  const maxAge = Number(searchParams.get('maxAge') || 15);
 
-  if (breeds.length) {
+  if (breeds.length || (minAge !== 0 || maxAge !== 15)) {
     display = "Currently showing results for";
 
     if (breeds.length) {
       display += ` ${breeds.join(', ')} breeds`;
     }
-
-    // if (ageMin !== 0 || ageMax !== 20) {
-    //   display += ` between ${ageMin} and ${ageMax} years old`;
-    // }
+    if (minAge !== 0 || maxAge !== 15) {
+      display += ` between ${minAge} and ${maxAge} years old`;
+    }
 
     display += "."
   }

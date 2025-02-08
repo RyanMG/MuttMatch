@@ -54,7 +54,7 @@ export default function SearchFilterQueryProvider({
 
   const initialBreeds = initialSearchParams.getAll('breeds');
   const initialPage = initialSearchParams.get('page');
-  const initialAgeRange = [Number(initialSearchParams.get('minAge')), Number(initialSearchParams.get('maxAge') || 15)];
+  const initialAgeRange = [Number(initialSearchParams.get('minAge') || 0), Number(initialSearchParams.get('maxAge') || 15)];
 
   const searchResults = useRef<TDog[]>([] as TDog[]);
   const totalResults = useRef<number>(1);
@@ -77,7 +77,7 @@ export default function SearchFilterQueryProvider({
   const clearFilters = () => {
     setBreeds([]);
     setCurrentPage(1);
-    setAgeRange([0, 20]);
+    setAgeRange([0, 15]);
     setShouldApplyFilters(true);
   }
 
@@ -104,7 +104,7 @@ export default function SearchFilterQueryProvider({
 
     if (ageRange[0] !== 0) params.set('minAge', `${ageRange[0]}`)
     else params.delete('minAge');
-    if (ageRange[1] !== 20) params.set('maxAge', `${ageRange[1]}`)
+    if (ageRange[1] !== 15) params.set('maxAge', `${ageRange[1]}`)
     else params.delete('maxAge');
 
     router.replace(`${pathname}?${params.toString()}`);
