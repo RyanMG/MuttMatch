@@ -7,15 +7,15 @@ import { useSearchFilterQueryContext } from '@context/searchFilterQueryProvider'
 
 export default function Pagination({ totalPages }: { totalPages: number }) {
   const { currentPage, setPage } = useSearchFilterQueryContext();
-  const allPages = generatePagination(currentPage?.current || 1, totalPages);
+  const allPages = generatePagination(currentPage || 1, totalPages);
 
   return (
     <>
       <div className="inline-flex">
         <PaginationArrow
           direction="left"
-          onClick={() => setPage(currentPage!.current - 1)}
-          isDisabled={currentPage!.current! <= 1}
+          onClick={() => setPage(currentPage - 1)}
+          isDisabled={currentPage <= 1}
         />
 
         <div className="flex -space-x-px">
@@ -37,7 +37,7 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
                 }}
                 page={page}
                 position={position}
-                isActive={currentPage!.current! === page}
+                isActive={currentPage === page}
               />
             );
           })}
@@ -45,8 +45,8 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
 
         <PaginationArrow
           direction="right"
-          onClick={() => setPage(currentPage!.current! + 1)}
-          isDisabled={currentPage!.current! >= totalPages}
+          onClick={() => setPage(currentPage + 1)}
+          isDisabled={currentPage >= totalPages}
         />
       </div>
     </>
@@ -69,7 +69,7 @@ function PaginationNumber({
     {
       'rounded-l-md': position === 'first' || position === 'single',
       'rounded-r-md': position === 'last' || position === 'single',
-      'z-10 bg-blue-600 border-blue-600 text-white': isActive,
+      'z-10 bg-indigo-900 border-indigo-950 text-white': isActive,
       'hover:bg-gray-100': !isActive && position !== 'middle',
       'text-gray-300': position === 'middle',
     },

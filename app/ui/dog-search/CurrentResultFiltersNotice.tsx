@@ -7,11 +7,11 @@ export default function CurrentResultFiltersNotice(): ReactNode {
 
   let display: string = "Showing all results. To see more personalized pups, choose from the options above!"
 
-  if (breeds?.current?.length) {
+  if (breeds.length) {
     display = "Currently showing results for";
 
-    if (breeds?.current?.length) {
-      display += ` ${breeds.current.join(', ')} breeds`;
+    if (breeds.length) {
+      display += ` ${breeds.join(', ')} breeds`;
     }
 
     // if (ageMin !== 0 || ageMax !== 20) {

@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, SyntheticEvent, useEffect, useState } from "react";
+import { ReactNode, SyntheticEvent, useState } from "react";
 
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -11,20 +11,15 @@ import { getDogBreeds } from "@api/dogs";
 import { useDebouncedCallback } from 'use-debounce';
 import {useSearchFilterQueryContext} from "@context/searchFilterQueryProvider"
 
-export default function BreedSelect({
-  breedSelection = [],
-}: {
-  breedSelection: string[] | undefined;
-}): ReactNode {
+export default function BreedSelect(): ReactNode {
 
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [searchResults, setSearchResults] = useState<string[]>([]);
-  const [currentBreedSelections, setCurrentBreedSelections] = useState<string[]>(breedSelection);
 
-  const {setBreeds} = useSearchFilterQueryContext();
+  const {setBreeds, breeds} = useSearchFilterQueryContext();
 
   const searchBreedsDebounced = useDebouncedCallback(async (searchTerm: string) => {
-    const resp = await getDogBreeds(searchTerm, currentBreedSelections);
+    const resp = await getDogBreeds(searchTerm, breeds);
     if (resp === "Unauthorized") {
       return;
     }
@@ -39,8 +34,8 @@ export default function BreedSelect({
    * User removes a breed from the list
    */
   const handleBreedRemoval = (breed: string) => {
-    setCurrentBreedSelections(
-      currentBreedSelections.filter(b => b !== breed)
+    setBreeds(
+      breeds.filter(b => b !== breed)
     )
   }
 
@@ -48,18 +43,14 @@ export default function BreedSelect({
    * User chooses a new breed from the list
    */
   const handleBreedSelection = (breed: string) => {
-    setCurrentBreedSelections([
-      ...currentBreedSelections,
+    setBreeds([
+      ...breeds,
       breed
     ]);
 
     setSearchTerm("");
     searchBreedsDebounced(searchTerm);
   }
-
-  useEffect(() => {
-    setBreeds(currentBreedSelections);
-  }, [setBreeds, currentBreedSelections]);
 
   return (
     <section className="flex flex-col">
@@ -93,7 +84,7 @@ export default function BreedSelect({
       </FormControl>
 
       <div className="flex flex-row flex-wrap py-2">
-        {currentBreedSelections.map(breed => (
+        {breeds.map(breed => (
           <div key={breed} className="pr-1">
             <Chip label={breed} variant="outlined" onDelete={() => {
               handleBreedRemoval(breed);

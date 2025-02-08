@@ -1,7 +1,7 @@
 'use client';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import MuiButton from '@mui/material/Button';
+import MuiButton, {ButtonProps} from '@mui/material/Button';
 import { ReactNode } from 'react';
 
 // Augment the palette to include new colors
@@ -9,11 +9,13 @@ declare module '@mui/material/styles' {
   interface Palette {
     secondary: Palette['primary'];
     primary: Palette['primary'];
+    destroy: Palette['primary'];
   }
 
   interface PaletteOptions {
     secondary?: PaletteOptions['primary'];
     primary?: PaletteOptions['primary'];
+    destroy?: PaletteOptions['primary'];
   }
 }
 
@@ -22,6 +24,7 @@ declare module '@mui/material/Button' {
   interface ButtonPropsColorOverrides {
     secondary: true;
     primary: true;
+    destroy: true;
   }
 }
 
@@ -39,14 +42,19 @@ const customThemes = createTheme({
       dark: '#1e1b4b',
       contrastText: '#FFF',
     },
+    destroy: {
+      main: '#701a75',
+      light: '#a21caf',
+      dark: '#4a044e',
+      contrastText: '#FFF',
+    },
   },
 });
 
-interface IButton {
+interface IButton extends ButtonProps {
   children: ReactNode;
   type: 'button' | 'submit'
-  theme: 'primary' | 'secondary';
-  disabled?: boolean;
+  theme: 'primary' | 'secondary' | 'destroy';
   onClick?: () => void;
 }
 
@@ -55,7 +63,8 @@ export default function Button({
   type,
   theme,
   disabled = false,
-  onClick
+  onClick,
+  fullWidth = false
 }: IButton) {
   return (
     <ThemeProvider theme={customThemes}>
@@ -66,6 +75,7 @@ export default function Button({
         disabled={disabled}
         onClick={() => onClick && onClick()}
         disableElevation
+        fullWidth={fullWidth}
       >
         {children}
       </MuiButton>

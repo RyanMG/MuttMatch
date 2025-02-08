@@ -13,23 +13,25 @@ import {
 const SearchFilterQueryContext = createContext<{
   query: RefObject<URLSearchParams> | null;
   applyFilters: () => void;
-  breeds: RefObject<string[]> | null;
+  breeds: string[];
   setBreeds: (breedList: string[]) => void;
-  currentPage: RefObject<number> | null;
+  currentPage: number;
   setPage: (page: number) => void;
   searchResults: RefObject<TDog[]> | null;
   resultsLoading: boolean;
   totalResults: RefObject<number> | null;
+  clearFilters: () => void;
 }>({
   query: null,
   applyFilters: () => null,
-  breeds: null,
+  breeds: [],
   setBreeds: () => null,
-  currentPage: null,
+  currentPage: 1,
   setPage: () => null,
   searchResults: null,
   resultsLoading: false,
-  totalResults: null
+  totalResults: null,
+  clearFilters: () => null
 });
 
 /**
@@ -54,18 +56,18 @@ export default function SearchFilterQueryProvider({
 
   const [resultsLoading, setResultsLoading] = useState<boolean>(true);
 
-  const breeds = useRef<string[]>(initialBreeds ? initialBreeds : []);
-  const currentPage = useRef<number>(initialPage ? Number(initialPage) : 1);
+  const [breeds, setBreeds] = useState<string[]>(initialBreeds ? initialBreeds : []);
+  const [currentPage, setCurrentPage] = useState<number>(initialPage ? Number(initialPage) : 1);
 
   const query = useRef<URLSearchParams>(new URLSearchParams(initialSearchParams));
 
-  const setBreeds = (breedList: string[]) => {
-    breeds.current = breedList;
+  const setPage = (newPage: number) => {
+    setCurrentPage(newPage);
   }
 
-  const setPage = (newPage: number) => {
-    currentPage.current = newPage;
-    applyFilters();
+  const clearFilters = () => {
+    setBreeds([]);
+    setCurrentPage(1);
   }
 
   /**
@@ -73,12 +75,12 @@ export default function SearchFilterQueryProvider({
    */
   const applyFilters = useCallback(async () => {
     const params = query.current;
-    params.set('page', currentPage.current.toString());
+    params.set('page', currentPage.toString());
 
     params.delete('breeds');
 
-    if (breeds.current) {
-      breeds.current.forEach(breed => params.append('breeds', breed))
+    if (breeds) {
+      breeds.forEach(breed => params.append('breeds', breed))
     }
 
     // if (city && state) {
@@ -97,7 +99,7 @@ export default function SearchFilterQueryProvider({
     router.replace(`${pathname}?${params.toString()}`);
     query.current = new URLSearchParams(params);
     fetchSearchResults();
-  }, [query, breeds]);
+  }, [query, breeds, currentPage]);
 
   /**
    * Fetch results
@@ -105,8 +107,8 @@ export default function SearchFilterQueryProvider({
   const fetchSearchResults = useCallback(async () => {
     setResultsLoading(true);
     const resp = await searchDogs({
-      breeds: breeds?.current,
-      page: currentPage.current,
+      breeds: breeds,
+      page: currentPage,
     });
 
     if (resp === "Unauthorized") {
@@ -124,6 +126,10 @@ export default function SearchFilterQueryProvider({
   }, [breeds])
 
   useEffect(() => {
+    applyFilters();
+  }, [currentPage])
+
+  useEffect(() => {
     fetchSearchResults();
   }, [])
 
@@ -138,7 +144,8 @@ export default function SearchFilterQueryProvider({
         setPage,
         searchResults,
         resultsLoading,
-        totalResults
+        totalResults,
+        clearFilters
       }}
     >
       {children}
