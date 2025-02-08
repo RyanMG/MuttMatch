@@ -1,6 +1,6 @@
 'use client';
 
-import {createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState, RefObject} from "react";
+import {createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState, Dispatch, SetStateAction, RefObject} from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {TDog} from '@definitions/dogs';
 import {
@@ -12,22 +12,26 @@ import {
  */
 const SearchFilterQueryContext = createContext<{
   query: RefObject<URLSearchParams> | null;
-  applyFilters: () => void;
+  setShouldApplyFilters: Dispatch<SetStateAction<boolean>>;
   breeds: string[];
   setBreeds: (breedList: string[]) => void;
   currentPage: number;
   setPage: (page: number) => void;
+  ageRange: number[];
+  setAgeRange: (ages: number[]) => void;
   searchResults: RefObject<TDog[]> | null;
   resultsLoading: boolean;
   totalResults: RefObject<number> | null;
   clearFilters: () => void;
 }>({
   query: null,
-  applyFilters: () => null,
+  setShouldApplyFilters: () => null,
   breeds: [],
   setBreeds: () => null,
   currentPage: 1,
   setPage: () => null,
+  ageRange: [0, 15],
+  setAgeRange: () => null,
   searchResults: null,
   resultsLoading: false,
   totalResults: null,
@@ -50,6 +54,7 @@ export default function SearchFilterQueryProvider({
 
   const initialBreeds = initialSearchParams.getAll('breeds');
   const initialPage = initialSearchParams.get('page');
+  const initialAgeRange = [Number(initialSearchParams.get('minAge')), Number(initialSearchParams.get('maxAge') || 15)];
 
   const searchResults = useRef<TDog[]>([] as TDog[]);
   const totalResults = useRef<number>(1);
@@ -58,16 +63,22 @@ export default function SearchFilterQueryProvider({
 
   const [breeds, setBreeds] = useState<string[]>(initialBreeds ? initialBreeds : []);
   const [currentPage, setCurrentPage] = useState<number>(initialPage ? Number(initialPage) : 1);
+  const [ageRange, setAgeRange] = useState<number[]>(initialAgeRange);
+
+  const [shouldApplyFilters, setShouldApplyFilters] = useState<boolean>(false);
 
   const query = useRef<URLSearchParams>(new URLSearchParams(initialSearchParams));
 
   const setPage = (newPage: number) => {
     setCurrentPage(newPage);
+    setShouldApplyFilters(true);
   }
 
   const clearFilters = () => {
     setBreeds([]);
     setCurrentPage(1);
+    setAgeRange([0, 20]);
+    setShouldApplyFilters(true);
   }
 
   /**
@@ -91,15 +102,15 @@ export default function SearchFilterQueryProvider({
     //   params.delete('state');
     // }
 
-    // if (minAge) params.set('minAge', `${minAge}`)
-    // else params.delete('minAge');
-    // if (maxAge) params.set('maxAge', `${maxAge}`)
-    // else params.delete('maxAge');
+    if (ageRange[0] !== 0) params.set('minAge', `${ageRange[0]}`)
+    else params.delete('minAge');
+    if (ageRange[1] !== 20) params.set('maxAge', `${ageRange[1]}`)
+    else params.delete('maxAge');
 
     router.replace(`${pathname}?${params.toString()}`);
     query.current = new URLSearchParams(params);
     fetchSearchResults();
-  }, [query, breeds, currentPage]);
+  }, [query, breeds, currentPage, ageRange]);
 
   /**
    * Fetch results
@@ -108,6 +119,7 @@ export default function SearchFilterQueryProvider({
     setResultsLoading(true);
     const resp = await searchDogs({
       breeds: breeds,
+      ageRange: ageRange,
       page: currentPage,
     });
 
@@ -123,25 +135,30 @@ export default function SearchFilterQueryProvider({
     searchResults.current = resp.dogs;
     totalResults.current = resp.total;
     setResultsLoading(false);
-  }, [breeds])
-
-  useEffect(() => {
-    applyFilters();
-  }, [currentPage, breeds])
+  }, [breeds, currentPage, ageRange])
 
   useEffect(() => {
     fetchSearchResults();
   }, [])
 
+  useEffect(() => {
+    if (shouldApplyFilters) {
+      applyFilters();
+      setShouldApplyFilters(false);
+    }
+  }, [shouldApplyFilters])
+
   return (
     <SearchFilterQueryContext.Provider
       value={{
         query,
-        applyFilters,
+        setShouldApplyFilters,
         breeds,
         setBreeds,
         currentPage,
         setPage,
+        ageRange,
+        setAgeRange,
         searchResults,
         resultsLoading,
         totalResults,

@@ -1,30 +1,24 @@
 import { ReactNode } from "react";
 import Slider from "@mui/material/Slider";
+import { useSearchFilterQueryContext } from "@context/searchFilterQueryProvider";
 
 function valuetext(value: number) {
   return `${value} years old`;
 }
 
-export default function AgeRangeSliders({
-  minAgeSelection = 0,
-  maxAgeSelection = 20,
-  handleChange
-}: {
-  minAgeSelection: number | undefined;
-  maxAgeSelection: number | undefined;
-  handleChange: (ages: number[]) => void;
-}): ReactNode {
+export default function AgeRangeSliders(): ReactNode {
+  const { ageRange, setAgeRange } = useSearchFilterQueryContext();
 
   const onChangeAgeRange = (event: Event, newValue: number | number[]) => {
     if (typeof newValue === 'number') return;
-    handleChange(newValue);
+    setAgeRange(newValue);
   };
 
   return (
     <div className="w-full px-4">
       <Slider
         getAriaLabel={() => 'Age range'}
-        value={[minAgeSelection, maxAgeSelection]}
+        value={[ageRange[0], ageRange[1]]}
         onChange={onChangeAgeRange}
         valueLabelDisplay="auto"
         getAriaValueText={valuetext}
@@ -32,8 +26,8 @@ export default function AgeRangeSliders({
         step={1}
         marks
         min={0}
-        max={20}
-/>
+        max={15}
+      />
     </div>
   )
 }

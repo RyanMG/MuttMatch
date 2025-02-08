@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 
 import BreedSelect from "./filters/BreedSelect";
 // import SearchByLocation from "./filters/SearchByLocation";
-// import AgeRangeSliders from "./filters/AgeRangeSliders";
+import AgeRangeSliders from "./filters/AgeRangeSliders";
 
 export default function SearchFilters(): ReactNode {
 
@@ -20,14 +20,10 @@ export default function SearchFilters(): ReactNode {
             handleChange={handleLocationChange}
           />
         </div>
-
+        */}
         <div className="w-1/3">
-          <AgeRangeSliders
-            minAgeSelection={minAge}
-            maxAgeSelection={maxAge}
-            handleChange={handleAgeRangeChange}
-          />
-        </div> */}
+          <AgeRangeSliders />
+        </div>
       </section>
     </>
   )

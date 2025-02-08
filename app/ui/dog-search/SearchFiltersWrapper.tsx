@@ -8,7 +8,7 @@ import { useSearchFilterQueryContext } from "@context/searchFilterQueryProvider"
 export default function SearchFiltersWrapper(): ReactNode {
 
   const [filtersShown, setFiltersShown] = useState<boolean>(false);
-  const { applyFilters, setPage, clearFilters } = useSearchFilterQueryContext()
+  const { setShouldApplyFilters, setPage, clearFilters } = useSearchFilterQueryContext()
 
   return (
     <div className="w-full flex flex-col">
@@ -54,7 +54,7 @@ export default function SearchFiltersWrapper(): ReactNode {
                 fullWidth
                 onClick={() => {
                   setPage(1);
-                  applyFilters();
+                  setShouldApplyFilters(true);
                   setFiltersShown(false);
                 }}
               >

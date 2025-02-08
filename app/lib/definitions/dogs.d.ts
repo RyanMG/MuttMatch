@@ -28,8 +28,7 @@ export type TDogMatch = {
 export interface ISearchDogs {
   breeds?: string[];
   zipCodes?: string[];
-  ageMin?: number;
-  ageMax?: number;
+  ageRange?: number[];
   size?: number;
   page?: number;
   sort?: string;

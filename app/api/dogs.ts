@@ -71,8 +71,7 @@ export async function getDogBreeds(searchTerm?: string, currentSelections: strin
 export async function searchDogs({
   breeds,
   // zipCodes,
-  // ageMin,
-  // ageMax,
+  ageRange,
   page = 1,
   sort = "breed:asc"
 }: ISearchDogs): Promise<TSearchDogsResponse | {error: string} | "Unauthorized"> {
@@ -80,6 +79,10 @@ export async function searchDogs({
   let filterQuery: string = "";
   if (breeds && breeds.length > 0) {
     filterQuery += breeds.reduce((acc, breed) => acc += `&breeds=${breed.split(' ').join('+')}`, "");
+  }
+
+  if (ageRange) {
+    filterQuery += `&ageMin=${ageRange[0]}&ageMax=${ageRange[1]}`;
   }
 
   const from = (page - 1) * NUM_RESULTS_PER_PAGE;
