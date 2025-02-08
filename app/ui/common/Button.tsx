@@ -64,7 +64,8 @@ export default function Button({
   theme,
   disabled = false,
   onClick,
-  fullWidth = false
+  fullWidth = false,
+  size = "medium"
 }: IButton) {
   return (
     <ThemeProvider theme={customThemes}>
@@ -73,6 +74,7 @@ export default function Button({
         type={type}
         color={theme}
         disabled={disabled}
+        size={size}
         onClick={() => onClick && onClick()}
         disableElevation
         fullWidth={fullWidth}

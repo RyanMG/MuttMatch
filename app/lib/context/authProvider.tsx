@@ -2,6 +2,7 @@
 
 import {createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState, RefObject} from "react";
 import useStorage from "@hooks/useLocalStorage";
+import dogBookmarks from "@api/bookmarks";
 import {
   TLoginLoginDetails
 } from "@definitions/login";
@@ -46,8 +47,9 @@ export default function AuthProvider ({children}:{children: ReactNode}): ReactNo
    */
   useEffect(() => {
     (async ():Promise<void> => {
-      const user = await getStorageItem(USER_STORAGE_TOKEN);
+      const user = await getStorageItem(USER_STORAGE_TOKEN) as TLoginLoginDetails;
       if (user && 'name' in user) {
+        const bookmarks = await dogBookmarks.getBookmarksFromStorage(user.email);
         userDetails.current = user;
         setHasSession(true);
       }

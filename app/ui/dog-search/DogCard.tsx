@@ -2,12 +2,15 @@ import {ReactNode} from 'react';
 import {TDog} from '@definitions/dogs';
 import Image from 'next/image';
 import Link from 'next/link';
+import Button from '@ui/common/Button';
+import dogBookmarks from "@api/bookmarks";
 
 export default function DogCard({
   dog
 }: {
   dog: TDog
 }): ReactNode {
+
   return (
     <article className="w-full md:w-1/2 lg:w-1/3">
       <Link href={`dog/${dog.id}?name=${dog.name}&breed=${dog.breed}&age=${dog.age}&zip_code=${dog.zip_code}&image=${dog.img}`}>
@@ -24,6 +27,14 @@ export default function DogCard({
 
             <div className="flex flex-col gap-1">
               <p className="text-lg text-indigo-950">{dog.name}</p>
+              <Button
+                theme="secondary"
+                size="small"
+                type="button"
+                onClick={() => dogBookmarks.addBookmark(dog)}
+              >
+                <p className="text-xs">Bookmark pup</p>
+              </Button>
             </div>
           </div>
         </div>

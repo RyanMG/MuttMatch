@@ -1,11 +1,9 @@
-import { TLoginLoginDetails } from "@definitions/login";
-
 export default function useStorage<T>() {
   const setStorageItem = (key: string, value: T) => {
     return localStorage.setItem(key, JSON.stringify(value));
   };
 
-  const getStorageItem = async (key: string): Promise<TLoginLoginDetails | null> => {
+  const getStorageItem = async (key: string): Promise<unknown | null> => {
     try {
       const resp:string|null = await localStorage.getItem(key);
       if (resp) {

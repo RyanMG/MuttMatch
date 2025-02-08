@@ -12,6 +12,10 @@ export type TSearchDogsResponse = {
   total: number
 }
 
+export type TDogBookmark = {
+  [id: TDogID]: TDog
+}
+
 export type TDog = {
     id: TDogID
     img: string
