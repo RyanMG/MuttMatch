@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useAuthContext } from "@context/authProvider";
 
 function SidebarItem({
   text,
@@ -28,6 +29,7 @@ const SidebarItems = () => {
 
 export default function SidebarLayout() {
   const [linksDropdownShown, showLinksDropdown] = useState<boolean>(false);
+  const { hasSession } = useAuthContext();
 
   return (
     <aside className="flex flex-col w-full h-18 md:w-[200px] md:h-full">
@@ -40,12 +42,17 @@ export default function SidebarLayout() {
           </div>
 
           <div className={`border-t border-indigo-600 pt-2 mt-1 ${linksDropdownShown ? 'flex' : 'hidden'}`}>
-            <SidebarItems />
+            {hasSession && (
+              <SidebarItems />
+            )}
+
           </div>
         </div>
 
         <div className="hidden md:block">
-          <SidebarItems />
+          {hasSession && (
+            <SidebarItems />
+          )}
         </div>
       </div>
     </aside>
