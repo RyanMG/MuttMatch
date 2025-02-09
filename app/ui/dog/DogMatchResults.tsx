@@ -25,7 +25,7 @@ export default function DogMatchResults(): ReactNode {
         setMatch(response);
       }
     })();
-  }, [bookmarks, match, getDogMatchById]);
+  }, [bookmarks, getDogMatchById]);
 
   if (!match) {
     return <PageLoading />
