@@ -184,18 +184,18 @@ export default function SearchFilterQueryProvider({
     router.replace(`${pathname}?${params.toString()}`);
     query.current = new URLSearchParams(params);
     fetchSearchResults();
-  }, [query, breeds, currentPage, ageRange, city, state, fetchSearchResults, pathname, router]);
+  }, [query, breeds, currentPage, ageRange, city, state, pathname, router]);
 
   useEffect(() => {
     fetchSearchResults();
-  }, [fetchSearchResults])
+  }, [])
 
   useEffect(() => {
     if (shouldApplyFilters) {
       applyFilters();
       setShouldApplyFilters(false);
     }
-  }, [shouldApplyFilters, applyFilters])
+  }, [shouldApplyFilters])
 
   return (
     <SearchFilterQueryContext.Provider
