@@ -16,12 +16,12 @@ import { useAuthContext } from '@context/authProvider';
  * CONTEXT
  */
 const BookmarkContext = createContext<{
-  getBookmarks: () => TDogBookmark | null;
+  bookmarks: TDogBookmark | null;
   clearBookmarks: () => void;
   addBookmark: (dog: TDog) => void;
   removeBookmark: (dogId: TDogID) => TDog | null;
 }>({
-  getBookmarks: () => null,
+  bookmarks: null,
   clearBookmarks: () => {},
   addBookmark: () => {},
   removeBookmark: () => null
@@ -69,11 +69,6 @@ export default function BookmarkProvider ({
     setStorageItem(BOOKMARK_TOKEN.current, bookmarks);
   }, [bookmarks]);
 
-  const getBookmarks = (): TDogBookmark | null => {
-    if (!BOOKMARK_TOKEN.current) return null;
-    return bookmarks;
-  }
-
   const clearBookmarks = (): void => {
     if (!BOOKMARK_TOKEN.current) return;
 
@@ -101,7 +96,7 @@ export default function BookmarkProvider ({
   return (
     <BookmarkContext.Provider
       value={{
-        getBookmarks,
+        bookmarks,
         clearBookmarks,
         addBookmark,
         removeBookmark

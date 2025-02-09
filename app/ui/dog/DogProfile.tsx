@@ -6,7 +6,6 @@ import {TDog} from '@definitions/dogs';
 import { getDogById } from "@api/dogs";
 import {useRouter} from 'next/navigation';
 import PageLoading from "@ui/common/PageLoading";
-import Button from "@ui/common/Button";
 
 export default function DogProfile({
   dogId,
@@ -89,17 +88,6 @@ export default function DogProfile({
           <p className="text-md text-indigo-950">{dog.current?.name} is living in the {dog.current?.zip_code} area!</p>
         </div>
       </div>
-
-      <div className="flex flex-row gap-2">
-        <Button
-          type="button"
-          theme="secondary"
-          onClick={() => router.back()}
-        >
-          Back to search results
-        </Button>
-      </div>
-
     </article>
   );
 }

@@ -2,6 +2,7 @@ import PageWrapper from "@ui/common/PageWrapper";
 import { ReactNode } from "react";
 import DogProfile from "@ui/dog/DogProfile";
 import {TDog} from '@definitions/dogs';
+import ProfileButtons from "@ui/dog/ProfileButtons";
 
 export default async function DogPage({
   params,
@@ -25,7 +26,7 @@ export default async function DogPage({
 
   if (dogParams && Object.keys(dogParams).length > 0) {
     dog = {
-      id: dogParams.id as TDog['id'],
+      id: pathParams.id as TDog['id'],
       name: dogParams.name as TDog['name'],
       breed: dogParams.breed as TDog['breed'],
       age: Number(dogParams.age) as TDog['age'],
@@ -36,7 +37,10 @@ export default async function DogPage({
 
   return (
     <PageWrapper pageTitle="Doggo Profile">
-      <DogProfile dogId={pathParams.id} dogParams={dog} />
+      <div className="flex flex-col h-full justify-between items-center">
+        <DogProfile dogId={pathParams.id} dogParams={dog} />
+        <ProfileButtons dog={dog} />
+      </div>
     </PageWrapper>
   );
 }

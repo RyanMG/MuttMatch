@@ -6,8 +6,7 @@ import NoSavedDogs from "@ui/dog/NoSavedDogs";
 import DogCard from "@ui/dog-search/DogCard";
 
 export default function SavedDogs(): ReactNode {
-  const { getBookmarks } = useBookmarkContext();
-  const bookmarks = getBookmarks();
+  const { bookmarks } = useBookmarkContext();
 
   if (!bookmarks || Object.keys(bookmarks).length === 0) {
     return <NoSavedDogs />
