@@ -1,3 +1,5 @@
+'use client';
+
 import Button from "@ui/common/Button";
 import { useRouter } from 'next/navigation';
 import { ReactNode } from "react";
