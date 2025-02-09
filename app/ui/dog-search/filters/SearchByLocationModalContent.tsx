@@ -22,8 +22,8 @@ export default function SearchByLocationModalContent({
   } = useSearchFilterQueryContext();
 
   return (
-    <>
-      <div className="flex flex-row gap-2">
+    <div className="flex flex-col gap-4 mt-5 mb-2">
+      <section className="flex flex-row gap-4">
         <div className="w-1/2">
           <SelectState
             stateSelection={state}
@@ -39,9 +39,9 @@ export default function SearchByLocationModalContent({
             }}
           />
         </div>
-      </div>
+      </section>
 
-      <div className="flex flex-row items-center justify-end gap-2">
+      <section className="flex flex-row items-center justify-end gap-2">
         <Button
           theme="secondary"
           type="button"
@@ -59,7 +59,7 @@ export default function SearchByLocationModalContent({
         >
           Search by this city.
         </Button>
-      </div>
-    </>
+      </section>
+    </div>
   )
 }

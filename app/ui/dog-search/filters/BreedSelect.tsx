@@ -5,7 +5,6 @@ import { ReactNode, SyntheticEvent, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import FormControl from "@mui/material/FormControl";
-import Chip from "@mui/material/Chip";
 
 import { getDogBreeds } from "@api/dogs";
 import { useDebouncedCallback } from 'use-debounce';
@@ -29,15 +28,6 @@ export default function BreedSelect(): ReactNode {
 
     setSearchResults(resp);
   }, 500);
-
-  /**
-   * User removes a breed from the list
-   */
-  const handleBreedRemoval = (breed: string) => {
-    setBreeds(
-      breeds.filter(b => b !== breed)
-    )
-  }
 
   /**
    * User chooses a new breed from the list
@@ -76,23 +66,9 @@ export default function BreedSelect(): ReactNode {
             setSearchTerm(newInputValue);
             searchBreedsDebounced(newInputValue);
           }}
-          sx={{
-            height: 50,
-            width: 300
-          }}
           renderInput={(params) => <TextField {...params} label="Breed" />}
         />
       </FormControl>
-
-      <div className="flex flex-row flex-wrap py-2">
-        {breeds.map(breed => (
-          <div key={breed} className="pr-1">
-            <Chip label={breed} variant="outlined" onDelete={() => {
-              handleBreedRemoval(breed);
-            }} />
-          </div>
-        ))}
-      </div>
     </section>
   )
 }

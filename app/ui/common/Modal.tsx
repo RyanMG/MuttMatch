@@ -21,7 +21,7 @@ export default function Modal({
       aria-describedby="modal-modal-description"
     >
       <section className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center">
-        <div className="border border-orange-400 rounded-lg bg-white flex flex-col min-w-[50%] min-h-[100px]">
+        <div className="border border-orange-400 rounded-lg bg-white flex flex-col min-w-[90%] lg:min-w-[50%] min-h-[100px]">
           <div className="flex flex-row items-center justify-between h-8 px-2 bg-orange-400 rounded-t-lg">
             <h1 className="text-white">{title}</h1>
             <CloseIcon onClick={closeModal} />

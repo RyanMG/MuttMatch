@@ -33,7 +33,6 @@ export default function StateSelect({
         }
       }}
       options={STATE_OPTIONS}
-      sx={{ width: 300 }}
       renderInput={(params) => <TextField {...params} label="State" />}
     />
   )
