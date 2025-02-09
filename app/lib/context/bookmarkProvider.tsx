@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
 import useLocalStorage from "@hooks/useLocalStorage";
 import {
   BOOKMARKS_STORAGE_TOKEN
@@ -10,20 +10,21 @@ import {
   TDog,
   TDogBookmark
 } from "@definitions/dogs";
+import { useAuthContext } from '@context/authProvider';
 
 /**
  * CONTEXT
  */
 const BookmarkContext = createContext<{
-  getBookmarks: () => TDogBookmark;
+  getBookmarks: () => TDogBookmark | null;
   clearBookmarks: () => void;
   addBookmark: (dog: TDog) => void;
-  removeBookmark: (dogId: TDogID) => void;
+  removeBookmark: (dogId: TDogID) => TDog | null;
 }>({
-  getBookmarks: () => ({} as TDogBookmark),
+  getBookmarks: () => null,
   clearBookmarks: () => {},
   addBookmark: () => {},
-  removeBookmark: () => {}
+  removeBookmark: () => null
 });
 
 /**
@@ -41,44 +42,59 @@ export default function BookmarkProvider ({
     removeStorageItem
   } = useLocalStorage();
 
+  const { userDetails, hasSession } = useAuthContext();
   const [bookmarks, setBookmarks] = useState<TDogBookmark>({} as TDogBookmark);
+  const BOOKMARK_TOKEN = useRef<string | null>(null);
 
   /**
    * Initial load
    */
   useEffect(() => {
     (async ():Promise<void> => {
-      const bookmarksFromStorage = await getStorageItem(BOOKMARKS_STORAGE_TOKEN) as TDogBookmark;
+      if (hasSession) {
+        BOOKMARK_TOKEN.current = `${BOOKMARKS_STORAGE_TOKEN}_${userDetails?.current?.email}`;
+        const bookmarksFromStorage = await getStorageItem(BOOKMARK_TOKEN.current) as TDogBookmark;
 
-      if (!bookmarksFromStorage) {
-        setStorageItem(BOOKMARKS_STORAGE_TOKEN, {} as TDogBookmark);
+        if (!bookmarksFromStorage) {
+          setStorageItem(BOOKMARK_TOKEN.current, {} as TDogBookmark);
+        }
+
+        setBookmarks(bookmarksFromStorage || {});
       }
-
-      setBookmarks(bookmarksFromStorage || {});
     })()
-  }, []);
+  }, [hasSession, userDetails]);
 
-  const getBookmarks = (): TDogBookmark => {
+  useEffect(() => {
+    if (!BOOKMARK_TOKEN.current) return;
+    setStorageItem(BOOKMARK_TOKEN.current, bookmarks);
+  }, [bookmarks]);
+
+  const getBookmarks = (): TDogBookmark | null => {
+    if (!BOOKMARK_TOKEN.current) return null;
     return bookmarks;
   }
 
   const clearBookmarks = (): void => {
-    removeStorageItem(BOOKMARKS_STORAGE_TOKEN);
+    if (!BOOKMARK_TOKEN.current) return;
+
+    removeStorageItem(BOOKMARK_TOKEN.current);
     setBookmarks({} as TDogBookmark);
   }
 
   const addBookmark = (dog: TDog): void => {
+    if (!BOOKMARK_TOKEN.current) return;
+
     setBookmarks({
       ...bookmarks,
       [dog.id]: dog
     });
-    setStorageItem(BOOKMARKS_STORAGE_TOKEN, bookmarks);
   }
 
-  const removeBookmark = (dogId: TDogID): TDog => {
+  const removeBookmark = (dogId: TDogID): TDog | null => {
+    if (!BOOKMARK_TOKEN.current) return null;
+
     const { [dogId]: dogToRemove, ...remainingBookmarks } = bookmarks;
     setBookmarks(remainingBookmarks);
-    setStorageItem(BOOKMARKS_STORAGE_TOKEN, bookmarks);
     return dogToRemove;
   }
 

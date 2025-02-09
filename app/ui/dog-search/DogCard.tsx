@@ -15,7 +15,7 @@ export default function DogCard({
 }): ReactNode {
   const { addBookmark, getBookmarks, removeBookmark } = useBookmarkContext();
   const bookmarks = getBookmarks();
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(Boolean(bookmarks[dog.id]));
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(Boolean(bookmarks && bookmarks[dog.id]));
 
   return (
     <article className="w-full md:w-1/2 lg:w-1/3">
@@ -41,8 +41,10 @@ export default function DogCard({
                   e.stopPropagation();
                   e.preventDefault();
                   if (isBookmarked) {
-                    removeBookmark(dog.id);
-                    setIsBookmarked(false);
+                    const removedDog = removeBookmark(dog.id);
+                    if (removedDog) {
+                      setIsBookmarked(false);
+                    }
                   } else {
                     addBookmark(dog);
                     setIsBookmarked(true);

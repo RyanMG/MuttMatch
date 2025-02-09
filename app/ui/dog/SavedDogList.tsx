@@ -9,7 +9,7 @@ export default function SavedDogs(): ReactNode {
   const { getBookmarks } = useBookmarkContext();
   const bookmarks = getBookmarks();
 
-  if (Object.keys(bookmarks).length === 0) {
+  if (!bookmarks || Object.keys(bookmarks).length === 0) {
     return <NoSavedDogs />
   }
 
