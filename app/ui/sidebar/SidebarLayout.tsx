@@ -12,8 +12,17 @@ function SidebarItem({
 }) {
   return (
     <Link href={link}>
-      <p className="text-white hover:text-gray-200">{text}</p>
+      <p className="text-white hover:text-gray-200 w-full my-2">{text}</p>
     </Link>
+  )
+}
+
+const SidebarItems = () => {
+  return (
+    <nav className="flex flex-col">
+      <SidebarItem text="Search Dogs" link="/dogs?page=1" />
+      <SidebarItem text="View Saved Dogs" link="/dogs/saved" />
+    </nav>
   )
 }
 
@@ -31,12 +40,12 @@ export default function SidebarLayout() {
           </div>
 
           <div className={`border-t border-indigo-600 pt-2 mt-1 ${linksDropdownShown ? 'flex' : 'hidden'}`}>
-            <SidebarItem text="Search Dogs" link="/search?page=1" />
+            <SidebarItems />
           </div>
         </div>
 
         <div className="hidden md:block">
-          <SidebarItem text="Search Dogs" link="/search?page=1" />
+          <SidebarItems />
         </div>
       </div>
     </aside>

@@ -60,7 +60,7 @@ export default function CitySearch({
         setZipCodes(Object.values(cityOptions).flat());
       }
     })();
-  }, [stateSelection, inputValue])
+  }, [stateSelection, inputValue, setZipCodes])
 
   return (
     <>

@@ -111,37 +111,6 @@ export default function SearchFilterQueryProvider({
   }
 
   /**
-   * Apply the currently selected filter into the URL params
-   */
-  const applyFilters = useCallback(async () => {
-    const params = query.current;
-    params.set('page', currentPage.toString());
-
-    params.delete('breeds');
-
-    if (breeds) {
-      breeds.forEach(breed => params.append('breeds', breed))
-    }
-
-    if (city && state) {
-      params.set('city', `${city}`)
-      params.set('state', `${state}`)
-    } else {
-      params.delete('city');
-      params.delete('state');
-    }
-
-    if (ageRange[0] !== 0) params.set('minAge', `${ageRange[0]}`)
-    else params.delete('minAge');
-    if (ageRange[1] !== 15) params.set('maxAge', `${ageRange[1]}`)
-    else params.delete('maxAge');
-
-    router.replace(`${pathname}?${params.toString()}`);
-    query.current = new URLSearchParams(params);
-    fetchSearchResults();
-  }, [query, breeds, currentPage, ageRange, city, state]);
-
-  /**
    * Fetch results
    */
   const fetchSearchResults = useCallback(async () => {
@@ -184,18 +153,49 @@ export default function SearchFilterQueryProvider({
     searchResults.current = resp.dogs;
     totalResults.current = resp.total;
     setResultsLoading(false);
-  }, [breeds, currentPage, ageRange, zipCodes])
+  }, [breeds, currentPage, ageRange, zipCodes, city, router, state])
+
+  /**
+   * Apply the currently selected filter into the URL params
+   */
+  const applyFilters = useCallback(async () => {
+    const params = query.current;
+    params.set('page', currentPage.toString());
+
+    params.delete('breeds');
+
+    if (breeds) {
+      breeds.forEach(breed => params.append('breeds', breed))
+    }
+
+    if (city && state) {
+      params.set('city', `${city}`)
+      params.set('state', `${state}`)
+    } else {
+      params.delete('city');
+      params.delete('state');
+    }
+
+    if (ageRange[0] !== 0) params.set('minAge', `${ageRange[0]}`)
+    else params.delete('minAge');
+    if (ageRange[1] !== 15) params.set('maxAge', `${ageRange[1]}`)
+    else params.delete('maxAge');
+
+    router.replace(`${pathname}?${params.toString()}`);
+    query.current = new URLSearchParams(params);
+    fetchSearchResults();
+  }, [query, breeds, currentPage, ageRange, city, state, fetchSearchResults, pathname, router]);
 
   useEffect(() => {
     fetchSearchResults();
-  }, [])
+  }, [fetchSearchResults])
 
   useEffect(() => {
     if (shouldApplyFilters) {
       applyFilters();
       setShouldApplyFilters(false);
     }
-  }, [shouldApplyFilters])
+  }, [shouldApplyFilters, applyFilters])
 
   return (
     <SearchFilterQueryContext.Provider

@@ -2,7 +2,7 @@
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import MuiButton, {ButtonProps} from '@mui/material/Button';
-import { ReactNode } from 'react';
+import { ReactNode, SyntheticEvent } from 'react';
 
 // Augment the palette to include new colors
 declare module '@mui/material/styles' {
@@ -55,7 +55,7 @@ interface IButton extends ButtonProps {
   children: ReactNode;
   type: 'button' | 'submit'
   theme: 'primary' | 'secondary' | 'destroy';
-  onClick?: () => void;
+  onClick?: (e: SyntheticEvent) => void;
 }
 
 export default function Button({
@@ -75,7 +75,7 @@ export default function Button({
         color={theme}
         disabled={disabled}
         size={size}
-        onClick={() => onClick && onClick()}
+        onClick={(e: SyntheticEvent) => onClick && onClick(e)}
         disableElevation
         fullWidth={fullWidth}
       >

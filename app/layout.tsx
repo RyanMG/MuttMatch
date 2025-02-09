@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import AuthProvider from "@context/authProvider";
+import BookmarkProvider from "@context/bookmarkProvider";
 import Header from "@ui/header/Header";
 import Sidebar from "@ui/sidebar/SidebarLayout";
 import "./globals.css";
@@ -33,11 +34,13 @@ export default function RootLayout({
         <AuthProvider>
           <div className="flex flex-col h-screen">
             <Header />
+            <BookmarkProvider>
 
-            <div className="flex-1 w-screen flex flex-col md:flex-row overflow-hidden">
-              <Sidebar />
-              {children}
-            </div>
+              <div className="flex-1 w-screen flex flex-col md:flex-row overflow-hidden">
+                <Sidebar />
+                {children}
+              </div>
+            </BookmarkProvider>
 
           </div>
         </AuthProvider>

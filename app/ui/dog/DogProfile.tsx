@@ -51,7 +51,7 @@ export default function DogProfile({
         setIsLoading(false);
       }
     })();
-  }, [hasDogParams, dogId, error.current, dog.current]);
+  }, [hasDogParams, dogId, error, dog, router]);
 
   if (isLoading) {
     return <PageLoading />

@@ -1,15 +1,21 @@
-import {ReactNode} from 'react';
-import {TDog} from '@definitions/dogs';
+'use client';
+
+import { ReactNode, useState } from 'react';
+import { TDog } from '@definitions/dogs';
 import Image from 'next/image';
 import Link from 'next/link';
 import Button from '@ui/common/Button';
-import dogBookmarks from "@api/bookmarks";
+import { useBookmarkContext } from '@context/bookmarkProvider';
+import { SyntheticEvent } from 'react';
 
 export default function DogCard({
   dog
 }: {
   dog: TDog
 }): ReactNode {
+  const { addBookmark, getBookmarks, removeBookmark } = useBookmarkContext();
+  const bookmarks = getBookmarks();
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(Boolean(bookmarks[dog.id]));
 
   return (
     <article className="w-full md:w-1/2 lg:w-1/3">
@@ -28,12 +34,22 @@ export default function DogCard({
             <div className="flex flex-col gap-1">
               <p className="text-lg text-indigo-950">{dog.name}</p>
               <Button
-                theme="secondary"
+                theme={isBookmarked ? "destroy" : "secondary"}
                 size="small"
                 type="button"
-                onClick={() => dogBookmarks.addBookmark(dog)}
+                onClick={(e: SyntheticEvent) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  if (isBookmarked) {
+                    removeBookmark(dog.id);
+                    setIsBookmarked(false);
+                  } else {
+                    addBookmark(dog);
+                    setIsBookmarked(true);
+                  }
+                }}
               >
-                <p className="text-xs">Bookmark pup</p>
+                <p className="text-xs">{isBookmarked ? 'Remove Bookmark' : 'Bookmark Pup'}</p>
               </Button>
             </div>
           </div>

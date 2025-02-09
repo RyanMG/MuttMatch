@@ -6,7 +6,9 @@ import DogCard from "@ui/dog-search/DogCard";
 import CurrentResultFiltersNotice from "@ui/dog-search/CurrentResultFiltersNotice";
 import Pagination from "./Pagination";
 import { getTotalPages } from "@utils/paginationUtils";
+
 import { useSearchFilterQueryContext } from "@context/searchFilterQueryProvider";
+
 import {
   NUM_RESULTS_PER_PAGE
 } from "@constants/api";
