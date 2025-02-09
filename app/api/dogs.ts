@@ -182,7 +182,7 @@ export async function getDogMatchById(idList: TDogID[]): Promise<TDog | { error:
       method: "POST",
       credentials: "include",
       headers: HEADERS,
-      body: JSON.stringify({idList})
+      body: JSON.stringify(idList)
     })
       .then(parsePayload);
 

@@ -23,6 +23,7 @@ const SidebarItems = () => {
     <nav className="flex flex-col">
       <SidebarItem text="Search Dogs" link="/dogs?page=1" />
       <SidebarItem text="View Saved Dogs" link="/dogs/saved" />
+      <SidebarItem text="Get My Match!" link="/dog/match" />
     </nav>
   )
 }
