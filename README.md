@@ -18,3 +18,6 @@ or
 * npm run start
 ```
 Then navigate to `http://localhost:3000`
+
+## Page Sample
+![App_Sample](https://github.com/user-attachments/assets/c54fd7eb-cf9c-4a3c-95cf-3ffd551e3aa3)
