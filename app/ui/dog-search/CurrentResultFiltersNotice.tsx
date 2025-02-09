@@ -9,15 +9,23 @@ export default function CurrentResultFiltersNotice(): ReactNode {
   const breeds = searchParams.getAll('breeds');
   const minAge = Number(searchParams.get('minAge') || 0);
   const maxAge = Number(searchParams.get('maxAge') || 15);
+  const city = searchParams.get('city') || "";
+  const state = searchParams.get('state') || "";
 
-  if (breeds.length || (minAge !== 0 || maxAge !== 15)) {
-    display = "Currently showing results for";
+  if (breeds.length || (minAge !== 0 || maxAge !== 15 || city)) {
+    display = `Currently showing results ${breeds.length || (minAge !== 0 || maxAge !== 15) ? " for" : ""}`;
 
     if (breeds.length) {
       display += ` ${breeds.join(', ')} breeds`;
     }
     if (minAge !== 0 || maxAge !== 15) {
       display += ` between ${minAge} and ${maxAge} years old`;
+    }
+    if (city) {
+      display += ` in ${city}`;
+      if (state) {
+        display += `, ${state}`;
+      }
     }
 
     display += "."
